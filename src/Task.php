@@ -2,6 +2,13 @@
 
 namespace Taskforce;
 
+use Taskforce\Actions\AbstractAction;
+use Taskforce\Actions\AcceptAction;
+use Taskforce\Actions\CancelAction;
+use Taskforce\Actions\CompleteAction;
+use Taskforce\Actions\RefuseAction;
+use Taskforce\Actions\RespondAction;
+
 class Task
 {
     // Статусы
@@ -10,12 +17,6 @@ class Task
     public const string STATUS_IN_PROGRESS = 'in_progress';
     public const string STATUS_COMPLETED = 'completed';
     public const string STATUS_FAILED = 'failed';
-
-    // Действия
-    public const string ACTION_CANCEL = 'cancel';
-    public const string ACTION_RESPOND = 'respond';
-    public const string ACTION_COMPLETE = 'complete';
-    public const string ACTION_REFUSE = 'refuse';
 
     private int $customerId;
     private ?int $contractorId;
@@ -45,50 +46,62 @@ class Task
     }
 
     /**
-     * Возвращает карту действий с заданием
-     *
-     * @return string[] Ассоциативный массив, где ключ - внутреннее имя, значение - название действия
-     */
-    public static function getActionMapping(): array
-    {
-        return [
-            self::ACTION_CANCEL => 'Отменить',
-            self::ACTION_RESPOND => 'Откликнуться',
-            self::ACTION_COMPLETE => 'Выполнено',
-            self::ACTION_REFUSE => 'Отказаться'
-        ];
-    }
-
-    /**
      * Возвращает статус, в который перейдет задание после выполнения конкретного действия
      *
-     * @param string $action Действие с заданием
-     * @return string|null Следующий статус задания или null
+     * @param AbstractAction $action Объект класса-действия
+     * @return string|null Следующий статус задания или null, если статус не меняется
      */
-    public function getNextStatus(string $action): ?string
+    public function getNextStatus(AbstractAction $action): ?string
     {
-        return match ($action) {
-            self::ACTION_CANCEL => self::STATUS_CANCELED,
-            self::ACTION_RESPOND => self::STATUS_IN_PROGRESS,
-            self::ACTION_COMPLETE => self::STATUS_COMPLETED,
-            self::ACTION_REFUSE => self::STATUS_FAILED,
+        // Возвращает имя класса объекта
+        $actionClass = \get_class($action);
+
+        return match ($actionClass) {
+            AcceptAction::class => self::STATUS_IN_PROGRESS,
+            CancelAction::class => self::STATUS_CANCELED,
+            CompleteAction::class => self::STATUS_COMPLETED,
+            RefuseAction::class => self::STATUS_FAILED,
             default => null
         };
     }
 
     /**
-     * Возвращает массив доступных действий для указанного статуса задания
+     * Возвращает массив объектов-действий для конкретного статуса
      *
-     * @param string $status Статус задания
-     * @return string[] Доступные действия или пустой массив
+     * @param string $status Статус
+     * @return AbstractAction[] Массив объектов возможных действий для текущего статуса
      */
-    public function getAvailableActions(string $status): array
+    private function getActionsByStatus(string $status): array
     {
         return match ($status) {
-            self::STATUS_NEW => [self::ACTION_CANCEL, self::ACTION_RESPOND],
-            self::STATUS_IN_PROGRESS => [self::ACTION_COMPLETE, self::ACTION_REFUSE],
+            self::STATUS_NEW => [
+                new CancelAction(),
+                new RespondAction(),
+                new AcceptAction()
+            ],
+            self::STATUS_IN_PROGRESS => [
+                new CompleteAction(),
+                new RefuseAction()
+            ],
             default => []
         };
+    }
+
+    /**
+     * Возвращает массив объектов доступных действий для пользователя
+     *
+     * @param int $userId Id пользователя
+     * @return AbstractAction[] Массив объектов доступных действий или пустой массив, если нет действий
+     */
+    public function getAvailableActions(int $userId): array
+    {
+        $actions = $this->getActionsByStatus($this->currentStatus);
+
+        // Фильтр объектов в зависимости от роли пользователя
+        return array_filter(
+            $actions,
+            fn($action) => $action->isAllowed($userId, $this->customerId, $this->contractorId)
+        );
     }
 
     public function getCustomerId(): int
