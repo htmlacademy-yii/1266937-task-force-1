@@ -8,6 +8,7 @@ use Taskforce\Actions\CancelAction;
 use Taskforce\Actions\CompleteAction;
 use Taskforce\Actions\RefuseAction;
 use Taskforce\Actions\RespondAction;
+use Taskforce\Exceptions\StatusException;
 
 class Task
 {
@@ -24,6 +25,10 @@ class Task
 
     public function __construct(int $customerId, ?int $contractorId = null, ?string $status = self::STATUS_NEW)
     {
+        if (!isset(self::getStatusMapping()[$status])) {
+            throw new StatusException("Несуществующий статус: '$status'");
+        }
+
         $this->customerId = $customerId;
         $this->contractorId = $contractorId;
         $this->currentStatus = $status;
