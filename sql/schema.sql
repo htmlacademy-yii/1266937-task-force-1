@@ -4,15 +4,16 @@ USE taskforce;
 
 CREATE TABLE IF NOT EXISTS categories (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(50) NOT NULL,
-  UNIQUE INDEX idx_title (title)
+  name VARCHAR(50) NOT NULL,
+  icon VARCHAR(50) NOT NULL,
+  UNIQUE INDEX idx_name (name)
 );
 
 CREATE TABLE IF NOT EXISTS cities (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  latitude DECIMAL(10, 8) NOT NULL,
-  longitude DECIMAL(11, 8) NOT NULL,
+  lat DECIMAL(10, 8) NOT NULL,
+  `long` DECIMAL(11, 8) NOT NULL,
   UNIQUE INDEX idx_name (name)
 );
 
