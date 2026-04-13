@@ -9,7 +9,7 @@ $config = [
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
         'request' => [
@@ -52,6 +52,8 @@ $config = [
         */
     ],
     'params' => $params,
+    'language' => 'ru-RU',
+    'timeZone' => 'Europe/Moscow',
 ];
 
 if (YII_ENV_DEV) {
