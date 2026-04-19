@@ -4,9 +4,9 @@
 
 use yii\helpers\Html;
 
-$tasks = $dataProvider->getModels()
+$tasks = $dataProvider->getModels();
 
-  ?>
+?>
 
 <main class="main-content container">
   <div class="left-column">
@@ -52,10 +52,13 @@ $tasks = $dataProvider->getModels()
   </div>
   <div class="right-column">
     <div class="right-card black">
+      class="search-form">
       <?= $this->render('_search', [
         'model' => $searchModel,
         'categories' => $categories
       ]) ?>
+
     </div>
+  </div>
   </div>
 </main>
