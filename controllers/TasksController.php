@@ -2,24 +2,27 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
-use app\models\Task;
+use yii\helpers\ArrayHelper;
+use app\models\TaskSearch;
+use app\models\Category;
 
 class TasksController extends Controller
 {
   public function actionIndex()
   {
-    $tasks = Task::find()
-      ->where(['status' => 'new'])
-      ->with(['category'])
-      ->orderBy(['created_at' => SORT_DESC])
-      ->all();
+    $searchModel = new TaskSearch();
+    $dataProvider = $searchModel->search(Yii::$app->request->get());
 
-    return $this->render(
-      'index',
-      [
-        'tasks' => $tasks
-      ]
-    );
+    $categories = Category::find()->all();
+    $categories = ArrayHelper::map($categories, 'id', 'name');
+
+    return $this->render('index', [
+      'dataProvider' => $dataProvider,
+      'searchModel' => $searchModel,
+      'categories' => $categories,
+    ]);
+
   }
 }
