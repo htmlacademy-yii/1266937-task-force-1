@@ -69,13 +69,18 @@ use yii\helpers\Html;
   <h4 class="head-card"><?= $model->getAttributeLabel('interval') ?></h4>
 
   <div class="form-group">
+    <label for="period-value"></label>
+
     <?= $form
       ->field($model, 'interval', [
-        'template' => "{label}\n{input}", // Лейбл над селектом
+        'template' => '{input}', // Лейбл над селектом
+        'options' => [
+          'tag' => false
+        ]
       ])
       ->dropDownList($model->optsInterval(), [
         'id' => 'period-value',
-        'prompt' => 'Выберите период',
+        'prompt' => 'За весь период',
       ])
       ->label(false);
     ?>
