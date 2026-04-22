@@ -49,7 +49,7 @@ class TasksController extends Controller
       throw new NotFoundHttpException("Задание с ID {$id} не найдено");
     }
 
-    $ResponsesDataProvider = new ActiveDataProvider([
+    $responsesDataProvider = new ActiveDataProvider([
       'query' => $task->getResponses()->with(['contractor.customerReviews']),
       'pagination' => false,
       'sort' => [
@@ -59,7 +59,7 @@ class TasksController extends Controller
 
     return $this->render('view', [
       'task' => $task,
-      'ResponsesDataProvider' => $ResponsesDataProvider,
+      'responsesDataProvider' => $responsesDataProvider,
     ]);
   }
 }

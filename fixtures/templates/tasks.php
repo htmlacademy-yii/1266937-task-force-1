@@ -1,6 +1,6 @@
 <?php
 
-/** var $faker \Faker\Generator */
+/** @var $faker \Faker\Generator */
 
 use app\models\Task;
 use app\models\Category;
@@ -25,5 +25,5 @@ return [
   'location' => $city['name'] ?? null,
   'latitude' => $city['lat'] ?? null,
   'longitude' => $city['long'] ?? null,
-  'status' => $faker->randomElement(array_keys(Task::optsStatus())),
+  'STATUS' => $faker->randomElement(array_keys(Task::optsSTATUS())),
 ];

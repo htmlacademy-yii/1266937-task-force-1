@@ -1,6 +1,6 @@
 <?php
 
-/** var $faker \Faker\Generator */
+/** @var $faker \Faker\Generator */
 /** @var integer $index */
 
 use app\models\User;
@@ -16,7 +16,7 @@ return [
   'username' => $faker->firstName(),
   'password_hash' => Yii::$app->getSecurity()->generatePasswordHash($faker->password()),
   'role' => $faker->randomElement(array_keys(User::optsRole())),
-  'avatar_id' => $index + 1,
+  'avatar_id' => $faker->optional(0.8)->numberBetween(1, 5),
   'city_id' => $faker->randomElement($cityIds),
   'birthday' => $faker->optional(0.7)->date('Y-m-d', '-18 years'),
   'phone' => $phone ? substr($phone, -11) : null,
