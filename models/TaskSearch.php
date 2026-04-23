@@ -10,9 +10,9 @@ use yii\data\ActiveDataProvider;
  */
 class TaskSearch extends Task
 {
-  public $isRemote;
-  public $noResponses;
-  public $interval;
+  public ?string $isRemote = null;
+  public ?string $noResponses = null;
+  public ?string $interval = null;
 
   /**
    * {@inheritdoc}
@@ -37,12 +37,20 @@ class TaskSearch extends Task
     ];
   }
 
-  public function getAdditionalFields()
+  /**
+   * Возвращает список атрибутов для группы чекбоксов "Дополнительно"
+   * @return string[]
+   */
+  public function getAdditionalFields(): array
   {
     return ['noResponses', 'isRemote'];
   }
 
-  public static function optsInterval()
+  /**
+   * Возвращает массив периодов для дропдауна
+   * @return array<string, string>
+   */
+  public static function optsInterval(): array
   {
     return [
       '1 hour' => '1 час',
@@ -53,27 +61,28 @@ class TaskSearch extends Task
     ];
   }
 
-  public function search($params)
+  /**
+   * Создает экземпляр ActiveDataProvider с учетом условий фильтрации
+   * @param array $params Массив параметров из запроса ($_GET)
+   * @return ActiveDataProvider
+   */
+  public function search(array $params): ActiveDataProvider
   {
     $query = Task::find()
       ->where(['tasks.STATUS' => self::STATUS_NEW])
       ->with(['category']);
 
-    $dataProvider = new ActiveDataProvider([
+    $tasksDataProvider = new ActiveDataProvider([
       'query' => $query,
-      'pagination' => [
-        'pageSize' => 5,
-      ],
+      'pagination' => ['pageSize' => 5],
       'sort' => [
-        'defaultOrder' => [
-          'created_at' => SORT_DESC,
-        ],
+        'defaultOrder' => ['created_at' => SORT_DESC],
       ]
     ]);
 
     // загружаем данные формы поиска
-    if (!$this->load($params)) {
-      return $dataProvider;
+    if (!$this->load($params) && $this->validate()) {
+      return $tasksDataProvider;
     }
 
     // изменяем запрос, добавляя в него фильтрацию
@@ -99,6 +108,6 @@ class TaskSearch extends Task
 
     }
 
-    return $dataProvider;
+    return $tasksDataProvider;
   }
 }

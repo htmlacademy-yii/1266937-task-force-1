@@ -23,12 +23,16 @@ use Yii;
  * @property File $avatar
  * @property Category[] $categories
  * @property City $city
- * @property CustomerReview[] $customerReviews
- * @property CustomerReview[] $customerReviews0
+ * @property Review[] $customerReviews
+ * @property Review[] $contractorReviews
  * @property Response[] $responses
- * @property Task[] $tasks
- * @property Task[] $tasks0
+ * @property Task[] $customerTasks
+ * @property Task[] $contractorTasks
  * @property UserCategory[] $userCategories
+ * 
+ * @property-read int|null $age
+ * @property-read int $completedTasksCount
+ * @property-read int $failedTasksCount
  */
 class User extends \yii\db\ActiveRecord
 {
@@ -36,8 +40,8 @@ class User extends \yii\db\ActiveRecord
     /**
      * ENUM field values
      */
-    const ROLE_CUSTOMER = 'customer';
-    const ROLE_CONTRACTOR = 'contractor';
+    public const string ROLE_CUSTOMER = 'customer';
+    public const string ROLE_CONTRACTOR = 'contractor';
 
     /**
      * {@inheritdoc}
@@ -127,17 +131,17 @@ class User extends \yii\db\ActiveRecord
      */
     public function getCustomerReviews()
     {
-        return $this->hasMany(CustomerReview::class, ['customer_id' => 'id']);
+        return $this->hasMany(Review::class, ['customer_id' => 'id']);
     }
 
     /**
-     * Gets query for [[CustomerReviews0]].
+     * Gets query for [[ReceivedReviews]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCustomerReviews0()
+    public function getReceivedReviews()
     {
-        return $this->hasMany(CustomerReview::class, ['contractor_id' => 'id']);
+        return $this->hasMany(Review::class, ['contractor_id' => 'id']);
     }
 
     /**
@@ -151,21 +155,21 @@ class User extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Tasks]].
+     * Gets query for [[CustomerTasks]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTasks()
+    public function getCustomerTasks()
     {
         return $this->hasMany(Task::class, ['customer_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Tasks0]].
+     * Gets query for [[ContractorTasks]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTasks0()
+    public function getContractorTasks()
     {
         return $this->hasMany(Task::class, ['contractor_id' => 'id']);
     }
@@ -225,5 +229,57 @@ class User extends \yii\db\ActiveRecord
     public function setRoleToContractor()
     {
         $this->role = self::ROLE_CONTRACTOR;
+    }
+
+    /**
+     * Возвращает количество выполненных заданий
+     * @return int
+     */
+    public function getCompletedTasksCount(): int
+    {
+        return $this->getContractorTasks()
+            ->andWhere(['status' => Task::STATUS_COMPLETED])
+            ->count();
+    }
+
+
+    /**
+     * Возвращает количество проваленных заданий пользователя
+     *
+     * @return int
+     */
+    public function getFailedTasksCount(): int
+    {
+        return $this->getContractorTasks()
+            ->andWhere(['STATUS' => Task::STATUS_FAILED])
+            ->count();
+    }
+
+    /**
+     * Возвращает возраст пользователя в годах в зависимости от даты рождения
+     * @return int|null
+     */
+    public function getAge(): ?int
+    {
+        if (empty($this->birthday)) {
+            return null;
+        }
+
+        $birthday = new \DateTime($this->birthday);
+        $date = new \DateTime();
+        $interval = $birthday->diff($date);
+
+        return $interval->y;
+    }
+
+    /**
+     * Проверяет, занят ли сейчас пользователь на активном задании
+     * @return bool
+     */
+    public function hasActiveTask(): bool
+    {
+        return $this->getContractorTasks()
+            ->andWhere(['status' => Task::STATUS_IN_PROGRESS])
+            ->exists();
     }
 }

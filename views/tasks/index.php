@@ -4,7 +4,7 @@
 
 use yii\helpers\Html;
 
-$tasks = $dataProvider->getModels();
+$tasks = $tasksDataProvider->getModels();
 
 ?>
 

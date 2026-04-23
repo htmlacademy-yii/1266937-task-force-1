@@ -3,8 +3,14 @@
 namespace app\fixtures;
 
 use yii\test\ActiveFixture;
+use app\models\User;
 
 class UserFixture extends ActiveFixture
 {
-  public $modelClass = 'app\models\User';
+  public $modelClass = User::class;
+
+  public $depends = [
+    '\app\fixtures\FileFixture',
+  ];
+
 }

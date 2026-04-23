@@ -26,7 +26,7 @@ use Yii;
  * @property City $city
  * @property User $contractor
  * @property User $customer
- * @property CustomerReview[] $customerReviews
+ * @property Review[] $Reviews
  * @property File[] $files
  * @property Response[] $responses
  * @property TaskFile[] $taskFiles
@@ -138,13 +138,13 @@ class Task extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[CustomerReviews]].
+     * Gets query for [[Reviews]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCustomerReviews()
+    public function getReviews()
     {
-        return $this->hasMany(CustomerReview::class, ['task_id' => 'id']);
+        return $this->hasMany(Review::class, ['task_id' => 'id']);
     }
 
     /**
