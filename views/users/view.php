@@ -15,7 +15,7 @@ use yii\widgets\ListView;
     <h3 class="head-main"><?= Html::encode($user->username) ?></h3>
     <div class="user-card">
       <div class="photo-rate">
-        <img class="card-photo" src="/<?= Html::encode($user->avatar->url ?? 'img/avatars/1.png') ?>" width="191"
+        <img class="card-photo" src="/<?= Html::encode($user->avatar->url ?? 'img/man-glasses.jpg') ?>" width="191"
           height="190" alt="Фото пользователя">
         <div class="card-rate">
           <div class="stars-rating big"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span

@@ -3,11 +3,13 @@
 /** @var app\models\Review $model */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 
 <div class="response-card">
-  <img class="customer-photo" src="img/man-coat.png" width="120" height="127" alt="Фото заказчиков">
+  <img class="customer-photo" src="<?= Url::to('@web/' . ($model->customer->avatar->url ?? 'img/man-coat.png')) ?>"
+    width="120" height="127" alt="Фото заказчиков">
   <div class="feedback-wrapper">
     <p class="feedback">«<?= Html::encode($model->text_comment) ?>»</p>
     <p class="task">Задание «<a href="#" class="link link--small"><?= Html::encode($model->task->title) ?></a>»

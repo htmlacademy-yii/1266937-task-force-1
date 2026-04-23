@@ -3,12 +3,13 @@
 /** @var app\models\Response $model */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 
 <div class="response-card">
-  <img class="customer-photo" src="<?= Html::encode($model->contractor->avatar_id) ?>" width="146" height="156"
-    alt="Фото заказчиков">
+  <img class="customer-photo" src="<?= Url::to('@web/' . ($model->contractor->avatar->url ?? 'img/man-sweater.png')) ?>"
+    width="146" height="156" alt="Фото заказчиков">
   <div class="feedback-wrapper">
     <a href="#" class="link link--block link--big"><?= Html::encode($model->contractor->username) ?></a>
     <div class="response-wrapper">
