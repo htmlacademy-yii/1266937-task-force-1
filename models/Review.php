@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "customer_reviews".
+ * This is the model class for table "reviews".
  *
  * @property int $id
  * @property string|null $created_at
@@ -19,7 +19,7 @@ use Yii;
  * @property User $customer
  * @property Task $task
  */
-class CustomerReview extends \yii\db\ActiveRecord
+class Review extends \yii\db\ActiveRecord
 {
 
 
@@ -28,7 +28,7 @@ class CustomerReview extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'customer_reviews';
+        return 'reviews';
     }
 
     /**

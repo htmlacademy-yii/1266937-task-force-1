@@ -2,7 +2,7 @@
 
 /** @var app\models\Response $model */
 
-use yii\Helpers\Html;
+use yii\helpers\Html;
 
 ?>
 

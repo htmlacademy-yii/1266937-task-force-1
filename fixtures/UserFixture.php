@@ -8,4 +8,9 @@ use app\models\User;
 class UserFixture extends ActiveFixture
 {
   public $modelClass = User::class;
+
+  public $depends = [
+    '\app\fixtures\FileFixture',
+  ];
+
 }

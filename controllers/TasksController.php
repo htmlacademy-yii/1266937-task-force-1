@@ -34,7 +34,7 @@ class TasksController extends Controller
 
   /**
    * Показывает одно задание с откликами
-   * @param int $id Идентификатор задания
+   * @param int $id ID задания
    * @throws NotFoundHttpException
    * @return string
    */
@@ -50,7 +50,7 @@ class TasksController extends Controller
     }
 
     $responsesDataProvider = new ActiveDataProvider([
-      'query' => $task->getResponses()->with(['contractor.customerReviews']),
+      'query' => $task->getResponses()->with(['contractor.receivedReviews']),
       'pagination' => false,
       'sort' => [
         'defaultOrder' => ['created_at' => SORT_DESC],
