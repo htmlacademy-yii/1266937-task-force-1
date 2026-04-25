@@ -29,7 +29,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <body>
         <?php $this->beginBody() ?>
 
-        <?php if (Yii::$app->controller->route !== 'sign-up/index'): ?>
+        <?php if (Yii::$app->controller->route !== 'signup/index'): ?>
             <header class="page-header">
                 <nav class="main-nav">
                     <a href='#' class="header-logo">
