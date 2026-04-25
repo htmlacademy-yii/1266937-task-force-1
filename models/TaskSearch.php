@@ -81,7 +81,7 @@ class TaskSearch extends Task
     ]);
 
     // загружаем данные формы поиска
-    if (!$this->load($params) && $this->validate()) {
+    if (!($this->load($params) && $this->validate())) {
       return $tasksDataProvider;
     }
 

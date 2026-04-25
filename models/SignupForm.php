@@ -2,19 +2,19 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use app\models\User;
 use app\models\City;
 
-class SignUpForm extends Model
+class SignupForm extends Model
 {
   public ?string $username = null;
   public ?string $email = null;
   public ?int $city_id = null;
   public ?string $password = null;
   public ?string $password_repeat = null;
-
-  public ?bool $is_contractor = null;
+  public ?bool $is_contractor = false;
 
   /**
    * {@inheritdoc}
@@ -25,7 +25,7 @@ class SignUpForm extends Model
       [
         ['username', 'email', 'password', 'password_repeat', 'city_id'],
         'required',
-        'message' => 'Заполните поле',
+        'message' => 'Обязательное поле',
       ],
       [['email'], 'email', 'message' => 'Введите корректный email'],
       [
@@ -73,4 +73,29 @@ class SignUpForm extends Model
       'is_contractor' => 'я собираюсь откликаться на заказы',
     ];
   }
+
+  /**
+   * Валидирует форму и сохраняет данные в таблице пользователей
+   * 
+   * @return User|null
+   */
+  public function signup(): ?User
+  {
+    if ($this->validate()) {
+      $user = new User();
+
+      $user->username = $this->username;
+      $user->email = $this->email;
+      $user->city_id = $this->city_id;
+      $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+      $user->role = $this->is_contractor ? User::ROLE_CONTRACTOR : User::ROLE_CUSTOMER;
+
+      if ($user->save(false)) {
+        return $user;
+      }
+    }
+
+    return null;
+  }
+
 }

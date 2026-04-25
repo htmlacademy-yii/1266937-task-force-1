@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\data\ActiveDataProvider;
 use app\models\Task;
@@ -22,8 +21,7 @@ class TasksController extends Controller
     $searchModel = new TaskSearch();
     $tasksDataProvider = $searchModel->search(Yii::$app->request->get());
 
-    $categories = Category::find()->all();
-    $categories = ArrayHelper::map($categories, 'id', 'name');
+    $categories = Category::find()->select(['name', 'id'])->indexBy('id')->column();
 
     return $this->render('index', [
       'tasksDataProvider' => $tasksDataProvider,
