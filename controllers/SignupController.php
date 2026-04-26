@@ -10,7 +10,6 @@ use app\models\City;
 
 class SignupController extends Controller
 {
-
   /**
    * Показывает страницу регистрации пользователя
    * 
@@ -23,6 +22,7 @@ class SignupController extends Controller
 
     if ($signupForm->load(Yii::$app->request->post())) {
       if ($user = $signupForm->signup()) {
+        Yii::$app->user->login($user);
         return $this->redirect(['tasks/index']);
       }
     }

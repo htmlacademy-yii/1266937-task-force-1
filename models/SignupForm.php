@@ -97,5 +97,4 @@ class SignupForm extends Model
 
     return null;
   }
-
 }
