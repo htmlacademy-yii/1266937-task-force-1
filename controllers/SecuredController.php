@@ -2,36 +2,30 @@
 
 namespace app\controllers;
 
-use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 
-class LandingController extends Controller
+abstract class SecuredController extends Controller
 {
-  public $layout = 'landing';
-
   /**
    * {@inheritdoc}
    */
   public function behaviors()
   {
     return [
-      'access' => [
+      'acсess' => [
         'class' => AccessControl::class,
         'rules' => [
           [
             'allow' => true,
-            'roles' => ['?'], // анонимные пользователи
+            'roles' => ['@'], // залогиненные пользователи
           ]
         ],
         'denyCallback' => function ($rule, $action) {
-          return $this->redirect(['tasks/index']);
+          return $this->redirect(['landing/index']);
         }
       ]
     ];
-  }
 
-  public function actionIndex(): string
-  {
-    return $this->render('index');
   }
 }

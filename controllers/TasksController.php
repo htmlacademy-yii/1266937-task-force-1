@@ -3,14 +3,13 @@
 namespace app\controllers;
 
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\data\ActiveDataProvider;
 use app\models\Task;
 use app\models\TaskSearch;
 use app\models\Category;
 
-class TasksController extends Controller
+class TasksController extends SecuredController
 {
   /**
    * Показывает список задач с фильтрацией

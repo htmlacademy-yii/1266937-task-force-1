@@ -1,3 +1,7 @@
+<?php
+
+?>
+
 <div class="landing-container">
   <div class="landing-top">
     <h1>Работа для всех.<br>
