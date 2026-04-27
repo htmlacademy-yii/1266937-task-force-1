@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "users".
@@ -34,7 +36,7 @@ use Yii;
  * @property-read int $completedTasksCount
  * @property-read int $failedTasksCount
  */
-class User extends \yii\db\ActiveRecord
+class User extends ActiveRecord implements IdentityInterface
 {
 
     /**
@@ -42,6 +44,36 @@ class User extends \yii\db\ActiveRecord
      */
     public const string ROLE_CUSTOMER = 'customer';
     public const string ROLE_CONTRACTOR = 'contractor';
+
+    public static function findIdentity($id)
+    {
+        return self::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+
+    }
+
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    public function getAuthKey()
+    {
+
+    }
+
+    public function validateAuthKey($authKey)
+    {
+
+    }
+
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
 
     /**
      * {@inheritdoc}
