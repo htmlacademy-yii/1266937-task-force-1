@@ -2581,6 +2581,6 @@ footer {
 .has-error .create__file {
   border-color: #FF116E; }
 
-.has-error div {
+.has-error span{
   color: #FF116E; }
 /*# sourceMappingURL=style.css.map */

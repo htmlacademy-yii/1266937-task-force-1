@@ -4,11 +4,7 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
-use app\widgets\Alert;
-use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
-use yii\bootstrap5\Nav;
-use yii\bootstrap5\NavBar;
+use yii\helpers\Html;
 
 AppAsset::register($this);
 
@@ -21,7 +17,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?= Yii::$app->language ?>">
     <head>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
@@ -57,7 +53,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <img class="user-photo" src="/img/man-glasses.png" width="55" height="55" alt="Аватар">
                     </a>
                     <div class="user-menu">
-                        <p class="user-name">Василий</p>
+                        <?php if (!Yii::$app->user->isGuest): ?>
+                            <p class="user-name">
+                                <?= Yii::$app->user->identity->username ?>
+                            </p>
+                        <?php endif; ?>
                         <div class="popup-head">
                             <ul class="popup-menu">
                                 <li class="menu-item">
@@ -67,9 +67,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                     <a href="#" class="link">Связаться с нами</a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#" class="link">Выход из системы</a>
+                                    <?= Html::a('Выход из системы', ['landing/logout'], [
+                                        'data-method' => 'post',
+                                        'class' => 'link'
+                                    ]) ?>
                                 </li>
-
                             </ul>
                         </div>
                     </div>
