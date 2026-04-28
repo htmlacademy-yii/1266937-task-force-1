@@ -25,7 +25,12 @@ class LandingController extends Controller
           [
             'allow' => true,
             'roles' => ['?'], // анонимные пользователи
-          ]
+          ],
+          [
+            'actions' => ['logout'],
+            'allow' => true,
+            'roles' => ['@'],
+          ],
         ],
         'denyCallback' => function () {
           return $this->redirect(['tasks/index']);
@@ -34,33 +39,28 @@ class LandingController extends Controller
     ];
   }
 
-  public function actionIndex(): string
-  {
-    $loginForm = new LoginForm();
-
-    Yii::$app->view->params['loginModel'] = $loginForm;
-
-    return $this->render('index', [
-      'model' => $loginForm,
-    ]);
-  }
-
-  public function actionLogin(): array|Response
+  public function actionIndex()
   {
     $loginForm = new LoginForm();
 
     if ($loginForm->load(Yii::$app->request->post())) {
       if (Yii::$app->request->isAjax) {
         Yii::$app->response->format = Response::FORMAT_JSON;
+
         return ActiveForm::validate($loginForm);
       }
 
       if ($loginForm->login()) {
-        return $this->redirect(('tasks/index'));
+        return $this->redirect(['tasks/index']);
       }
-    }
 
-    return $this->redirect(['landing/index']);
+
+    }
+    Yii::$app->view->params['loginForm'] = $loginForm;
+
+    return $this->render('index', [
+      'loginForm' => $loginForm,
+    ]);
   }
 
   public function actionLogout()

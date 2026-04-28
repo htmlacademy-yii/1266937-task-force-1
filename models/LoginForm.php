@@ -29,6 +29,7 @@ class LoginForm extends Model
         return [
             // email and password are both required
             [['email', 'password'], 'required'],
+            ['email', 'email'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
@@ -50,9 +51,8 @@ class LoginForm extends Model
      * This method serves as the inline validation for password.
      *
      * @param string $attribute the attribute currently being validated
-     * @param array $params the additional name-value pairs given in the rule
      */
-    public function validatePassword($attribute, $params): void
+    public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
@@ -80,7 +80,7 @@ class LoginForm extends Model
      *
      * @return User|null
      */
-    public function getUser(): ?User
+    public function getUser()
     {
         if ($this->_user === false) {
             $this->_user = User::findOne(['email' => $this->email]);

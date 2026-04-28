@@ -139,7 +139,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
       </footer>
 
       <?= $this->render('/landing/_login-form', [
-        'model' => $this->params['loginModel'] ?? new \app\models\LoginForm()
+        'loginForm' => $this->params['loginForm'] ?? new \app\models\LoginForm()
       ]) ?>
 
     </div>

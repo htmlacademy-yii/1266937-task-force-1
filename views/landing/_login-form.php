@@ -1,15 +1,38 @@
+<?php
+
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+
+\yii\widgets\ActiveFormAsset::register($this);
+
+?>
+
 <section class="modal enter-form form-modal" id="enter-form">
   <h2>Вход на сайт</h2>
-  <form action="#" method="post">
-    <p>
-      <label class="form-modal-description" for="enter-email">Email</label>
-      <input class="enter-form-email input input-middle" type="email" name="enter-email" id="enter-email">
-    </p>
-    <p>
-      <label class="form-modal-description" for="enter-password">Пароль</label>
-      <input class="enter-form-email input input-middle" type="password" name="enter-email" id="enter-password">
-    </p>
-    <button class="button" type="submit">Войти</button>
-  </form>
+  <?php $form = ActiveForm::begin([
+    'id' => 'login-form',
+    'enableAjaxValidation' => true,
+    'validateOnSubmit' => true,
+    'fieldConfig' => [
+      'options' => ['tag' => 'p'],
+      'template' => "{label}\n{input}\n{error}",
+      'labelOptions' => ['class' => 'form-modal-description'],
+      'inputOptions' => ['class' => 'enter-form-email input input-middle'],
+      'errorOptions' => [
+        'tag' => 'span',
+        'class' => 'help-block',
+      ],
+    ],
+  ]); ?>
+
+  <?= $form->field($loginForm, 'email')->textInput() ?>
+  <?= $form->field($loginForm, 'password')->passwordInput() ?>
+
+  <?= Html::submitButton('Войти', [
+    'class' => 'button',
+  ]) ?>
+
+  <?php ActiveForm::end(); ?>
+
   <button class="form-modal-close" type="button">Закрыть</button>
 </section>

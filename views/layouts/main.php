@@ -67,9 +67,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                     <a href="#" class="link">Связаться с нами</a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#" class="link">Выход из системы</a>
+                                    <?= Html::a('Выход из системы', ['landing/logout'], [
+                                        'data-method' => 'post',
+                                        'class' => 'link'
+                                    ]) ?>
                                 </li>
-
                             </ul>
                         </div>
                     </div>
