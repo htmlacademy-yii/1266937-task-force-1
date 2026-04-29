@@ -38,3 +38,6 @@ tests/_support/_generated
 fixtures/data/*
 
 .env
+
+/web/uploads/
+!/web/uploads/.gitkeep

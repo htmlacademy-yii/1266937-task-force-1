@@ -5,6 +5,7 @@
 
 use app\assets\AppAsset;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 
@@ -28,7 +29,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <?php if (Yii::$app->controller->route !== 'signup/index'): ?>
             <header class="page-header">
                 <nav class="main-nav">
-                    <a href='#' class="header-logo">
+                    <a href='<?= Url::to(['tasks/index']) ?>' class="header-logo">
                         <img class="logo-image" src="/img/logotype.png" width=227 height=60 alt="taskforce">
                     </a>
                     <div class="nav-wrapper">
@@ -40,7 +41,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                 <a href="#" class="link link--nav">Мои задания</a>
                             </li>
                             <li class="list-item">
-                                <a href="#" class="link link--nav">Создать задание</a>
+                                <a href="<?= Url::to(['tasks/create']) ?>" class="link link--nav">Создать задание</a>
                             </li>
                             <li class="list-item">
                                 <a href="#" class="link link--nav">Настройки</a>

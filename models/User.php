@@ -224,8 +224,8 @@ class User extends ActiveRecord implements IdentityInterface
     public static function optsRole()
     {
         return [
-            self::ROLE_CUSTOMER => 'customer',
-            self::ROLE_CONTRACTOR => 'contractor',
+            self::ROLE_CUSTOMER => 'Заказчик',
+            self::ROLE_CONTRACTOR => 'Исполнитель',
         ];
     }
 
