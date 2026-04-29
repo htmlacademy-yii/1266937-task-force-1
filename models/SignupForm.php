@@ -91,6 +91,13 @@ class SignupForm extends Model
       $user->role = $this->is_contractor ? User::ROLE_CONTRACTOR : User::ROLE_CUSTOMER;
 
       if ($user->save(false)) {
+        $auth = Yii::$app->authManager;
+        $role = $auth->getRole($user->role);
+
+        if ($role) {
+          $auth->assign($role, $user->id);
+        }
+
         return $user;
       }
     }

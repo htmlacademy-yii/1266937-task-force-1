@@ -51,7 +51,7 @@ use yii\widgets\ListView;
         <dt>Дата публикации</dt>
         <dd><?= Yii::$app->formatter->asRelativeTime($task->created_at) ?></dd>
         <dt>Срок выполнения</dt>
-        <dd><?= Yii::$app->formatter->asDatetime($task->deadline_at, 'php:j F, H:i') ?></dd>
+        <dd><?= Yii::$app->formatter->asDatetime($task->deadline_at, 'php:j F') ?></dd>
         <dt>Статус</dt>
         <dd><?= $task->displaySTATUS() ?></dd>
       </dl>

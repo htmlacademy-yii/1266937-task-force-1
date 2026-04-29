@@ -42,6 +42,11 @@ $config = [
                 ],
             ],
         ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'defaultTimeZone' => 'Europe/Moscow',
+            'timeZone' => 'Europe/Moscow',
+        ],
         'db' => $db,
 
         'urlManager' => [
@@ -53,6 +58,9 @@ $config = [
                 'users/view/<id:\d+>' => 'users/view',
 
             ],
+        ],
+        'authManager' => [
+            'class' => yii\rbac\DbManager::class,
         ],
 
     ],

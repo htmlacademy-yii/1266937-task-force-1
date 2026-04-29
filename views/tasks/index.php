@@ -3,6 +3,7 @@
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $tasks = $tasksDataProvider->getModels();
 
@@ -15,7 +16,8 @@ $tasks = $tasksDataProvider->getModels();
     <?php foreach ($tasks as $task): ?>
       <div class="task-card">
         <div class="header-task">
-          <a href="#" class="link link--block link--big"><?= Html::encode($task->title) ?></a>
+          <a href="<?= Url::to(['tasks/view', 'id' => $task->id]) ?>"
+            class="link link--block link--big"><?= Html::encode($task->title) ?></a>
           <p class="price price--task"><?= $task->budget ? Html::encode($task->budget) . ' ₽' : '' ?> </p>
         </div>
         <p class="info-text">

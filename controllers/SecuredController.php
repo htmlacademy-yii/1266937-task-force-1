@@ -13,7 +13,7 @@ abstract class SecuredController extends Controller
   public function behaviors()
   {
     return [
-      'acсess' => [
+      'access' => [
         'class' => AccessControl::class,
         'rules' => [
           [
