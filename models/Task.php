@@ -3,6 +3,11 @@
 namespace app\models;
 
 use Yii;
+use app\services\actions\AbstractAction;
+use app\services\actions\AcceptAction;
+use app\services\actions\CancelAction;
+use app\services\actions\CompleteAction;
+use app\services\actions\RefuseTaskAction;
 
 /**
  * This is the model class for table "tasks".
@@ -264,5 +269,25 @@ class Task extends \yii\db\ActiveRecord
     public function setSTATUSToFailed()
     {
         $this->STATUS = self::STATUS_FAILED;
+    }
+
+    /**
+     * Возвращает статус, в который перейдет задание после выполнения конкретного действия
+     *
+     * @param AbstractAction $action Объект класса-действия
+     * @return string|null Следующий статус задания или null, если статус не меняется
+     */
+    public function getNextStatus(AbstractAction $action): ?string
+    {
+        // Возвращает имя класса объекта
+        $actionClass = \get_class($action);
+
+        return match ($actionClass) {
+            AcceptAction::class => self::STATUS_IN_PROGRESS,
+            CancelAction::class => self::STATUS_CANCELED,
+            CompleteAction::class => self::STATUS_COMPLETED,
+            RefuseTaskAction::class => self::STATUS_FAILED,
+            default => null
+        };
     }
 }

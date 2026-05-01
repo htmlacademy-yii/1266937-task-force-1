@@ -2,7 +2,7 @@
 
 namespace Taskforce\Actions;
 
-class RefuseAction extends AbstractAction
+class RefuseTaskAction extends AbstractAction
 {
     public function getName(): string
     {
@@ -11,7 +11,7 @@ class RefuseAction extends AbstractAction
 
     public function getCodeName(): string
     {
-        return 'refuse';
+        return 'refuse-task';
     }
 
     public function isAllowed(int $userId, int $customerId, ?int $contractorId): bool
