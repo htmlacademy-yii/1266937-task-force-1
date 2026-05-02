@@ -6,7 +6,6 @@ use Yii;
 use app\models\Task;
 use app\models\Response;
 
-// отклики
 class AcceptAction extends AbstractAction
 {
     public function getName(): string
@@ -24,7 +23,17 @@ class AcceptAction extends AbstractAction
         return $userId === $customerId && $contractorId === null;
     }
 
-    public function execute(Task $task, array $params = [])
+    public function getType(): string
+    {
+        return self::TYPE_RESPONSE;
+    }
+
+    public function isModal(): bool
+    {
+        return false;
+    }
+
+    public function execute(Task $task, array $params = []): bool
     {
         $responseId = $params['responseId'] ?? null;
         $response = Response::findOne($responseId);
@@ -43,7 +52,7 @@ class AcceptAction extends AbstractAction
                 throw new \Exception();
             }
 
-            $response->STATUS = 'accepted';
+            $response->setSTATUSToAccepted();
 
             if (!$response->save()) {
                 throw new \Exception();

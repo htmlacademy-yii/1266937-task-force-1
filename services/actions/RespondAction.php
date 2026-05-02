@@ -7,6 +7,16 @@ use app\models\Response;
 
 class RespondAction extends AbstractAction
 {
+    private ?Response $model = null;
+
+    public function getModel(): Response
+    {
+        if ($this->model === null) {
+            $this->model = new Response();
+        }
+
+        return $this->model;
+    }
     public function getName(): string
     {
         return 'Откликнуться';
@@ -14,7 +24,7 @@ class RespondAction extends AbstractAction
 
     public function getCodeName(): string
     {
-        return 'respond';
+        return 'act_response';
     }
 
     public function isAllowed(int $userId, int $customerId, ?int $contractorId, string $status): bool
@@ -24,14 +34,16 @@ class RespondAction extends AbstractAction
 
     public function execute($task, $params = []): bool
     {
-        $response = new Response();
+        $response = $this->getModel();
 
-        if ($response->load($params) && $response->validate()) {
+        if ($response->load($params)) {
             $response->task_id = $task->id;
             $response->contractor_id = Yii::$app->user->id;
-            $response->STATUS = 'new';
+            $response->setSTATUSToNew();
 
-            return $response->save(false);
+            if ($response->validate()) {
+                return $response->save(false);
+            }
         }
 
         return false;

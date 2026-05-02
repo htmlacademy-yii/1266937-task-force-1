@@ -8,6 +8,8 @@ use app\services\actions\AcceptAction;
 use app\services\actions\CancelAction;
 use app\services\actions\CompleteAction;
 use app\services\actions\RefuseTaskAction;
+use app\services\actions\RespondAction;
+use app\services\actions\RefuseContractorAction;
 
 /**
  * This is the model class for table "tasks".
@@ -289,5 +291,46 @@ class Task extends \yii\db\ActiveRecord
             RefuseTaskAction::class => self::STATUS_FAILED,
             default => null
         };
+    }
+
+    /**
+     * Возвращает массив объектов-действий для конкретного статуса
+     *
+     * @param string $status Статус
+     * @return AbstractAction[] Массив объектов возможных действий для текущего статуса
+     */
+    public function getActionsByStatus(string $status): array
+    {
+        return match ($status) {
+            self::STATUS_NEW => [
+                new CancelAction(),
+                new RespondAction(),
+                new AcceptAction(),
+                new RefuseContractorAction(),
+            ],
+            self::STATUS_IN_PROGRESS => [
+                new CompleteAction(),
+                new RefuseTaskAction()
+            ],
+            default => []
+        };
+    }
+
+    /**
+     * Возвращает массив объектов доступных действий для пользователя
+     *
+     * @param int $userId Id пользователя
+     * @return AbstractAction[] Массив объектов доступных действий или пустой массив, если нет действий
+     */
+    public function getAvailableActions(int $userId, string $type): array
+    {
+        $actions = $this->getActionsByStatus($this->STATUS);
+
+        // Фильтр объектов в зависимости от роли пользователя
+        return array_filter(
+            $actions,
+            fn($action) => $action->getType() === $type
+            && $action->isAllowed($userId, $this->customer_id, $this->contractor_id, $this->STATUS)
+        );
     }
 }

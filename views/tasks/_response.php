@@ -4,6 +4,8 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\components\ButtonActionWidget;
+use app\services\actions\AbstractAction;
 
 ?>
 
@@ -29,8 +31,16 @@ use yii\helpers\Url;
   </div>
 
   <div class="button-popup">
+    <?= ButtonActionWidget::widget([
+      'task' => $task,
+      'response' => $model,
+      'type' => AbstractAction::TYPE_RESPONSE,
+    ]) ?>
+  </div>
+
+  <!-- <div class="button-popup">
     <a href="#" class="button button--blue button--small">Принять</a>
     <a href="#" class="button button--orange button--small">Отказать</a>
-  </div>
+  </div> -->
 
 </div>

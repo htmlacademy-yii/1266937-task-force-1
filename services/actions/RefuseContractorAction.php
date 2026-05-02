@@ -22,13 +22,23 @@ class RefuseContractorAction extends AbstractAction
     return $status === Task::STATUS_NEW && $userId === $customerId;
   }
 
+  public function getType(): string
+  {
+    return self::TYPE_RESPONSE;
+  }
+
+  public function isModal(): bool
+  {
+    return true;
+  }
+
   public function execute(Task $task, array $params = []): bool
   {
     $responseId = $params['responseId'] ?? null;
     $response = Response::findOne($responseId);
 
     if ($response) {
-      $response->STATUS = 'rejected';
+      $response->setSTATUSToRejected();
 
       return $response->save();
     }

@@ -13,7 +13,7 @@ class RefuseTaskAction extends AbstractAction
 
     public function getCodeName(): string
     {
-        return 'refuse';
+        return 'refusal';
     }
 
     public function isAllowed(int $userId, int $customerId, ?int $contractorId, string $status): bool

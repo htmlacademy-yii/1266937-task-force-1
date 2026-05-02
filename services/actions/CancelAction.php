@@ -21,8 +21,8 @@ class CancelAction extends AbstractAction
         return $userId === $customerId && $contractorId === null;
     }
 
-    public function execute(Task $task, array $params = [])
+    public function isModal(): bool
     {
-
+        return false;
     }
 }

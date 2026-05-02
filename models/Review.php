@@ -38,7 +38,8 @@ class Review extends \yii\db\ActiveRecord
     {
         return [
             [['created_at'], 'safe'],
-            [['task_id', 'customer_id', 'contractor_id', 'rating', 'text_comment'], 'required'],
+            [['task_id', 'customer_id', 'contractor_id', 'text_comment'], 'required'],
+            [['rating'], 'default', 'value' => 5],
             [['task_id', 'customer_id', 'contractor_id', 'rating'], 'integer'],
             [['text_comment'], 'string'],
             [['task_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['task_id' => 'id']],
@@ -54,12 +55,12 @@ class Review extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'created_at' => 'Created At',
-            'task_id' => 'Task ID',
-            'customer_id' => 'Customer ID',
-            'contractor_id' => 'Contractor ID',
-            'rating' => 'Rating',
-            'text_comment' => 'Text Comment',
+            'created_at' => 'Создано',
+            'task_id' => 'ID задания',
+            'customer_id' => 'ID заказчика',
+            'contractor_id' => 'ID исполнителя',
+            'rating' => 'Рейтинг',
+            'text_comment' => 'Комментарий',
         ];
     }
 
