@@ -27,7 +27,7 @@ $tasks = $tasksDataProvider->getModels();
         <div class="footer-task">
           <p class="info-text town-text"><?= Html::encode($task->location ?? 'Удалённая работа') ?></p>
           <p class="info-text category-text"><?= Html::encode($task->category->name ?? '') ?></p>
-          <a href="#" class="button button--black">Смотреть Задание</a>
+          <a href="<?= Url::to(['tasks/view', 'id' => $task->id]) ?>" class="button button--black">Смотреть Задание</a>
         </div>
       </div>
     <?php endforeach; ?>

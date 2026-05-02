@@ -3,6 +3,13 @@
 namespace app\models;
 
 use Yii;
+use app\services\actions\AbstractAction;
+use app\services\actions\AcceptAction;
+use app\services\actions\CancelAction;
+use app\services\actions\CompleteAction;
+use app\services\actions\RefuseTaskAction;
+use app\services\actions\RespondAction;
+use app\services\actions\RefuseContractorAction;
 
 /**
  * This is the model class for table "tasks".
@@ -264,5 +271,66 @@ class Task extends \yii\db\ActiveRecord
     public function setSTATUSToFailed()
     {
         $this->STATUS = self::STATUS_FAILED;
+    }
+
+    /**
+     * Возвращает статус, в который перейдет задание после выполнения конкретного действия
+     *
+     * @param AbstractAction $action Объект класса-действия
+     * @return string|null Следующий статус задания или null, если статус не меняется
+     */
+    public function getNextStatus(AbstractAction $action): ?string
+    {
+        // Возвращает имя класса объекта
+        $actionClass = \get_class($action);
+
+        return match ($actionClass) {
+            AcceptAction::class => self::STATUS_IN_PROGRESS,
+            CancelAction::class => self::STATUS_CANCELED,
+            CompleteAction::class => self::STATUS_COMPLETED,
+            RefuseTaskAction::class => self::STATUS_FAILED,
+            default => null
+        };
+    }
+
+    /**
+     * Возвращает массив объектов-действий для конкретного статуса
+     *
+     * @param string $status Статус
+     * @return AbstractAction[] Массив объектов возможных действий для текущего статуса
+     */
+    public function getActionsByStatus(string $status): array
+    {
+        return match ($status) {
+            self::STATUS_NEW => [
+                new CancelAction(),
+                new RespondAction(),
+                new AcceptAction(),
+                new RefuseContractorAction(),
+            ],
+            self::STATUS_IN_PROGRESS => [
+                new CompleteAction(),
+                new RefuseTaskAction()
+            ],
+            default => []
+        };
+    }
+
+    /**
+     * Возвращает массив объектов доступных действий для пользователя
+     *
+     * @param int $userId Id пользователя
+     * @return AbstractAction[] Массив объектов доступных действий или пустой массив, если нет действий
+     */
+    public function getAvailableActions(int $userId, string $type): array
+    {
+        $actions = $this->getActionsByStatus($this->STATUS);
+
+        // Фильтр объектов в зависимости от роли пользователя
+        return array_filter(
+            $actions,
+            fn($action) => $action->getType() === $type
+            && $action->isAllowed($userId, $this->customer_id, $this->contractor_id, $this->STATUS)
+        );
     }
 }

@@ -24,9 +24,9 @@ class Response extends \yii\db\ActiveRecord
     /**
      * ENUM field values
      */
-    const STATUS_NEW = 'new';
-    const STATUS_ACCEPTED = 'accepted';
-    const STATUS_REJECTED = 'rejected';
+    public const string STATUS_NEW = 'new';
+    public const string STATUS_ACCEPTED = 'accepted';
+    public const string STATUS_REJECTED = 'rejected';
 
     /**
      * {@inheritdoc}
@@ -43,6 +43,7 @@ class Response extends \yii\db\ActiveRecord
     {
         return [
             [['text_comment', 'price'], 'default', 'value' => null],
+            [['price'], 'integer', 'min' => 1, 'tooSmall' => 'Введите число больше 0', 'message' => 'Введите целое число'],
             [['STATUS'], 'default', 'value' => 'new'],
             [['created_at'], 'safe'],
             [['task_id', 'contractor_id'], 'required'],
@@ -61,12 +62,12 @@ class Response extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'created_at' => 'Created At',
-            'task_id' => 'Task ID',
-            'contractor_id' => 'Contractor ID',
-            'text_comment' => 'Text Comment',
-            'price' => 'Price',
-            'STATUS' => 'Status',
+            'created_at' => 'Создано',
+            'task_id' => 'ID задания',
+            'contractor_id' => 'ID заказчика',
+            'text_comment' => 'Ваш комментарий',
+            'price' => 'Ваша цена',
+            'STATUS' => 'Статус',
         ];
     }
 
