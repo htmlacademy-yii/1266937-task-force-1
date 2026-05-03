@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\models\Task;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 /**
  * Модель для фильтрации списка заданий
@@ -39,6 +40,7 @@ class TaskSearch extends Task
 
   /**
    * Возвращает список атрибутов для группы чекбоксов "Дополнительно"
+   * 
    * @return string[]
    */
   public function getAdditionalFields(): array
@@ -64,13 +66,14 @@ class TaskSearch extends Task
   /**
    * Создает экземпляр ActiveDataProvider с учетом условий фильтрации
    * @param array $params Массив параметров из запроса ($_GET)
+   * 
+   * @param ActiveQuery|null $query
+   * 
    * @return ActiveDataProvider
    */
-  public function search(array $params): ActiveDataProvider
+  public function search(array $params, ?ActiveQuery $query = null): ActiveDataProvider
   {
-    $query = Task::find()
-      ->where(['tasks.STATUS' => self::STATUS_NEW])
-      ->with(['category']);
+    $query ??= Task::find();
 
     $tasksDataProvider = new ActiveDataProvider([
       'query' => $query,
@@ -80,33 +83,8 @@ class TaskSearch extends Task
       ]
     ]);
 
-    // загружаем данные формы поиска
-    if (!($this->load($params) && $this->validate())) {
-      return $tasksDataProvider;
-    }
-
-    // изменяем запрос, добавляя в него фильтрацию
-    $query->andFilterWhere(['category_id' => $this->category_id]);
-
-    if ($this->isRemote) {
-      $query->andWhere(['tasks.city_id' => null]);
-    }
-
-    if ($this->noResponses) {
-      $query->joinWith('responses')
-        ->andWhere(['responses.id' => null]);
-    }
-
-    if ($this->interval) {
-      $dateTime = new \DateTime();
-
-      $date = $dateTime
-        ->modify("- $this->interval")
-        ->format('Y-m-d H:i:s');
-
-      $query->andWhere(['>=', 'tasks.created_at', $date]);
-
-    }
+    $this->load($params);
+    $this->validate();
 
     return $tasksDataProvider;
   }

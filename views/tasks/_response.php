@@ -1,6 +1,7 @@
 <?php
 
 /** @var app\models\Response $model */
+/** @var app\models\Task $task */
 
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -10,10 +11,11 @@ use app\services\actions\AbstractAction;
 ?>
 
 <div class="response-card">
-  <img class="customer-photo" src="<?= Url::to('@web/' . ($model->contractor->avatar->url ?? 'img/man-sweater.png')) ?>"
-    width="146" height="156" alt="Фото заказчиков">
+  <img class="customer-photo"
+    src="<?= Url::to('@web/' . ($model->contractor->avatar?->url ?? 'img/man-sweater.png')) ?>" width="146" height="156"
+    alt="Фото заказчиков">
   <div class="feedback-wrapper">
-    <a href="#" class="link link--block link--big"><?= Html::encode($model->contractor->username) ?></a>
+    <a href="#" class="link link--block link--big"><?= Html::encode($model->contractor->username ?? 'Аноним') ?></a>
     <div class="response-wrapper">
       <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span
           class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span></div>
@@ -37,10 +39,5 @@ use app\services\actions\AbstractAction;
       'type' => AbstractAction::TYPE_RESPONSE,
     ]) ?>
   </div>
-
-  <!-- <div class="button-popup">
-    <a href="#" class="button button--blue button--small">Принять</a>
-    <a href="#" class="button button--orange button--small">Отказать</a>
-  </div> -->
 
 </div>
