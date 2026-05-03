@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -41,9 +40,32 @@ class TasksController extends SecuredController
   public function actionIndex(): string
   {
     $searchModel = new TaskSearch();
-    $tasksDataProvider = $searchModel->search(Yii::$app->request->get());
-
     $categories = Category::find()->select(['name', 'id'])->indexBy('id')->column();
+
+    $query = Task::find()
+      ->where(['tasks.STATUS' => Task::STATUS_NEW])
+      ->with('category');
+
+    $searchModel->load(Yii::$app->request->get());
+
+    if ($searchModel->validate()) {
+      $query->andFilterWhere(['category_id' => $searchModel->category_id]);
+
+      if ($searchModel->isRemote) {
+        $query->andWhere(['tasks.location' => null]);
+      }
+
+      if ($searchModel->noResponses) {
+        $query->joinWith('responses')->andWhere(['responses.id' => null]);
+      }
+
+      if ($searchModel->interval) {
+        $date = (new \DateTime())->modify("- $searchModel->interval")->format('Y-m-d H:i:s');
+        $query->andWhere(['>=', 'tasks.created_at', $date]);
+      }
+    }
+
+    $tasksDataProvider = $searchModel->search(Yii::$app->request->get(), $query);
 
     return $this->render('index', [
       'tasksDataProvider' => $tasksDataProvider,

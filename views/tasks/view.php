@@ -14,17 +14,19 @@ use \app\services\actions\AbstractAction;
 $apiKey = Yii::$app->params['geocoderApiKey'];
 $this->registerJsFile("//api-maps.yandex.ru/2.1/?apikey={$apiKey}&lang=ru_RU", ['position' => \yii\web\View::POS_HEAD]);
 
-$js = <<<JS
-    ymaps.ready(function () {
-        var myMap = new ymaps.Map("map", {
-            center: [{$task->latitude}, {$task->longitude}],
-            zoom: 14
+if ($task->latitude && $task->longitude) {
+  $js = <<<JS
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map("map", {
+                center: [{$task->latitude}, {$task->longitude}],
+                zoom: 14
+            });
+            myMap.geoObjects.add(new ymaps.Placemark([{$task->latitude}, {$task->longitude}]));
         });
-        myMap.geoObjects.add(new ymaps.Placemark([{$task->latitude}, {$task->longitude}]));
-    });
-JS;
+    JS;
 
-$this->registerJs($js);
+  $this->registerJs($js);
+}
 
 ?>
 
@@ -42,21 +44,22 @@ $this->registerJs($js);
       'type' => AbstractAction::TYPE_TASK
     ]) ?>
 
-    <div class="task-map">
-      <div id="map" style="width: 725px; height: 346px;"></div>
-      <p class="map-address town">
-        <?= Html::encode($task->city->name ?? '') ?>
-      </p>
-      <p class="map-address">
-        <?php
-        $location = $task->location;
-        $parts = explode(',', $location, 2);
-        $displayAddress = isset($parts[1]) ? trim($parts[1]) : $parts[0];
-
-        echo Html::encode($displayAddress);
-        ?>
-      </p>
-    </div>
+    <?php if ($task->latitude && $task->longitude): ?>
+      <div class="task-map">
+        <div id="map" class="map" style="width: 725px; height: 346px;"></div>
+        <p class="map-address town">
+          <?= Html::encode($task->city?->name ?? 'Удалённая работа') ?>
+        </p>
+        <p class="map-address">
+          <?php
+          $location = (string) $task->location;
+          $parts = explode(',', $location, 2);
+          $displayAddress = isset($parts[1]) ? trim($parts[1]) : ($parts[0] ?: 'Удалённая работа');
+          echo Html::encode($displayAddress);
+          ?>
+        </p>
+      </div>
+    <?php endif; ?>
 
     <h4 class="head-regular">Отклики на задание</h4>
 

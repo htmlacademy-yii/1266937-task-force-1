@@ -38,7 +38,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                 <a class="link link--nav">Новое</a>
                             </li>
                             <li class="list-item">
-                                <a href="#" class="link link--nav">Мои задания</a>
+                                <a href="<?= Url::to(['my-tasks/index']) ?>" class="link link--nav">
+                                    Мои задания
+                                </a>
                             </li>
                             <li class="list-item">
                                 <a href="<?= Url::to(['tasks/create']) ?>" class="link link--nav">Создать задание</a>

@@ -29,6 +29,8 @@ class ButtonActionWidget extends Widget
         'refusal' => 'orange',
         'completion' => 'pink',
         'cancel' => 'yellow',
+        'refuse-contractor' => 'orange',
+        'accept' => 'blue',
         default => 'blue'
       };
 
