@@ -44,11 +44,11 @@ class Task extends \yii\db\ActiveRecord
     /**
      * ENUM field values
      */
-    const STATUS_NEW = 'new';
-    const STATUS_CANCELED = 'canceled';
-    const STATUS_IN_PROGRESS = 'in_progress';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_FAILED = 'failed';
+    public const string STATUS_NEW = 'new';
+    public const string STATUS_CANCELED = 'canceled';
+    public const string STATUS_IN_PROGRESS = 'in_progress';
+    public const string STATUS_COMPLETED = 'completed';
+    public const string STATUS_FAILED = 'failed';
 
     /**
      * {@inheritdoc}

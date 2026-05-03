@@ -2,7 +2,10 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
+use app\models\Category;
+use app\models\Task;
 
 class TaskForm extends Model
 {
@@ -10,10 +13,14 @@ class TaskForm extends Model
   public $title;
   public $description;
   public $category_id;
-  // локация
+  public $location;
+  public $latitude;
+  public $longitude;
   public $budget;
   public $deadline_at;
   public $task_files;
+
+  public $city_id;
 
   /**
    * {@inheritdoc}
@@ -42,7 +49,11 @@ class TaskForm extends Model
         'message' => 'Выберите категорию из списка'
       ],
       [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
-      // TODO Локация
+      [['latitude', 'longitude', 'city_id'], 'safe'],
+      [['location'], 'validateCity', 'skipOnEmpty' => false],
+      [['latitude', 'longitude'], 'number'],
+      [['latitude'], 'number', 'min' => -90, 'max' => 90],
+      [['longitude'], 'number', 'min' => -180, 'max' => 180],
       [['budget'], 'integer', 'min' => 1, 'tooSmall' => 'Введите число больше 0', 'message' => 'Введите целое число'],
       [
         ['deadline_at'],
@@ -70,7 +81,7 @@ class TaskForm extends Model
       'title' => 'Мне нужно',
       'description' => 'Подробности задания',
       'category_id' => 'Категория',
-      // Локация
+      'location' => 'Локация',
       'budget' => 'Бюджет',
       'deadline_at' => 'Срок исполнения',
       'task_files' => 'Файлы',
@@ -91,14 +102,26 @@ class TaskForm extends Model
       $task->title = $this->title;
       $task->description = $this->description;
       $task->category_id = $this->category_id;
+      $task->location = $this->location;
+      $task->latitude = $this->latitude;
+      $task->longitude = $this->longitude;
       $task->budget = $this->budget;
       $task->deadline_at = $this->deadline_at;
-      $task->customer_id = \Yii::$app->user->id;
+      $task->customer_id = Yii::$app->user->id;
       $task->STATUS = Task::STATUS_NEW;
+
+      $task->city_id = Yii::$app->user->identity->city_id;
 
       return $task->save() ? $task : null;
     }
 
     return null;
+  }
+
+  public function validateCity($attribute)
+  {
+    if (!empty($this->$attribute) && (empty($this->latitude) || empty($this->longitude))) {
+      $this->addError($attribute, 'Выберите адрес из списка');
+    }
   }
 }
