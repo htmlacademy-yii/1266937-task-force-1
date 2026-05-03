@@ -5,8 +5,37 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use app\assets\VendorAsset;
+
+VendorAsset::register($this);
+$this->registerJsFile('@web/js/init-autocomplete.js', ['depends' => [VendorAsset::class]]);
+
+$userCity = Yii::$app->user->identity->city->name ?? '';
+$this->registerJsVar('userCity', $userCity);
 
 ?>
+
+<style>
+  .autoComplete_wrapper {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .autoComplete_wrapper>input {
+    width: 100% !important;
+    height: 39px !important;
+    padding: 9px !important;
+    background-image: url('/img/location-icon.svg') !important;
+    background-repeat: no-repeat !important;
+    background-repeat: no-repeat !important;
+    background-size: 19px 24px !important;
+    background-position: 630px 6px !important;
+  }
+
+  .autoComplete_wrapper>input {
+    background-image: none;
+  }
+</style>
 
 <main class="main-content main-content--center container">
   <div class="add-task-form regular-form">
@@ -42,9 +71,17 @@ use yii\helpers\Html;
     ) ?>
 
     <div class="form-group">
-      <label class="control-label" for="location">Локация</label>
-      <input class="location-icon" id="location" type="text">
-      <span class="help-block">Error description is here</span>
+      <?= $form->field($taskForm, 'location', [
+        'template' => "{label}\n{input}\n{error}"
+      ])->textInput([
+            'id' => 'location',
+            'class' => 'location-icon',
+            'autocomplete' => 'off'
+          ]) ?>
+
+      <?= Html::activeHiddenInput($taskForm, 'latitude', ['id' => 'latitude']) ?>
+      <?= Html::activeHiddenInput($taskForm, 'longitude', ['id' => 'longitude']) ?>
+      <?= Html::activeHiddenInput($taskForm, 'city_id', ['id' => 'city_id']) ?>
     </div>
 
     <div class="half-wrapper">

@@ -11,6 +11,21 @@ use yii\widgets\ActiveForm;
 use app\components\ButtonActionWidget;
 use \app\services\actions\AbstractAction;
 
+$apiKey = Yii::$app->params['geocoderApiKey'];
+$this->registerJsFile("//api-maps.yandex.ru/2.1/?apikey={$apiKey}&lang=ru_RU", ['position' => \yii\web\View::POS_HEAD]);
+
+$js = <<<JS
+    ymaps.ready(function () {
+        var myMap = new ymaps.Map("map", {
+            center: [{$task->latitude}, {$task->longitude}],
+            zoom: 14
+        });
+        myMap.geoObjects.add(new ymaps.Placemark([{$task->latitude}, {$task->longitude}]));
+    });
+JS;
+
+$this->registerJs($js);
+
 ?>
 
 <main class="main-content container">
@@ -28,9 +43,19 @@ use \app\services\actions\AbstractAction;
     ]) ?>
 
     <div class="task-map">
-      <img class="map" src="/img/map.png" width="725" height="346" alt="Новый арбат, 23, к. 1">
-      <p class="map-address town">Москва</p>
-      <p class="map-address">Новый арбат, 23, к. 1</p>
+      <div id="map" style="width: 725px; height: 346px;"></div>
+      <p class="map-address town">
+        <?= Html::encode($task->city->name ?? '') ?>
+      </p>
+      <p class="map-address">
+        <?php
+        $location = $task->location;
+        $parts = explode(',', $location, 2);
+        $displayAddress = isset($parts[1]) ? trim($parts[1]) : $parts[0];
+
+        echo Html::encode($displayAddress);
+        ?>
+      </p>
     </div>
 
     <h4 class="head-regular">Отклики на задание</h4>
