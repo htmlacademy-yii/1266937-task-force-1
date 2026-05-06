@@ -6,10 +6,10 @@ use Yii;
 use yii\base\Model;
 use app\models\Category;
 use app\models\Task;
+use app\services\FileService;
 
 class TaskForm extends Model
 {
-
   public $title;
   public $description;
   public $category_id;
@@ -18,9 +18,8 @@ class TaskForm extends Model
   public $longitude;
   public $budget;
   public $deadline_at;
-  public $task_files;
-
   public $city_id;
+  public $uploadedFiles;
 
   /**
    * {@inheritdoc}
@@ -48,13 +47,25 @@ class TaskForm extends Model
         'targetAttribute' => 'id',
         'message' => 'Выберите категорию из списка'
       ],
-      [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
+      [
+        ['category_id'],
+        'exist',
+        'skipOnError' => true,
+        'targetClass' => Category::class,
+        'targetAttribute' => ['category_id' => 'id']
+      ],
       [['latitude', 'longitude', 'city_id'], 'safe'],
       [['location'], 'validateCity', 'skipOnEmpty' => false],
       [['latitude', 'longitude'], 'number'],
       [['latitude'], 'number', 'min' => -90, 'max' => 90],
       [['longitude'], 'number', 'min' => -180, 'max' => 180],
-      [['budget'], 'integer', 'min' => 1, 'tooSmall' => 'Введите число больше 0', 'message' => 'Введите целое число'],
+      [
+        ['budget'],
+        'integer',
+        'min' => 1,
+        'tooSmall' => 'Введите число больше 0',
+        'message' => 'Введите целое число'
+      ],
       [
         ['deadline_at'],
         'date',
@@ -64,7 +75,7 @@ class TaskForm extends Model
         'message' => 'Введите дату в формате ГГГГ-ММ-ДД'
       ],
       [
-        ['task_files'],
+        ['uploadedFiles'],
         'file',
         'skipOnEmpty' => true,
         'maxFiles' => 0,
@@ -84,7 +95,7 @@ class TaskForm extends Model
       'location' => 'Локация',
       'budget' => 'Бюджет',
       'deadline_at' => 'Срок исполнения',
-      'task_files' => 'Файлы',
+      'uploadedFiles' => 'Файлы',
     ];
   }
 
@@ -95,8 +106,14 @@ class TaskForm extends Model
    */
   public function createTask(): Task|null
   {
-    if ($this->validate()) {
 
+    if (!$this->validate()) {
+      return null;
+    }
+
+    $transaction = Yii::$app->db->beginTransaction();
+
+    try {
       $task = new Task();
 
       $task->title = $this->title;
@@ -107,15 +124,42 @@ class TaskForm extends Model
       $task->longitude = $this->longitude;
       $task->budget = $this->budget;
       $task->deadline_at = $this->deadline_at;
+
       $task->customer_id = Yii::$app->user->id;
+
       $task->STATUS = Task::STATUS_NEW;
 
-      $task->city_id = Yii::$app->user->identity->city_id;
+      if (!empty($this->location)) {
+        $task->city_id = Yii::$app->user->identity->city_id;
+      }
 
-      return $task->save() ? $task : null;
+      if (!$task->save()) {
+        Yii::error('Ошибки валидации: ' . json_encode($task->getErrors()));
+        throw new \Exception('Не удалось сохранить задание');
+      }
+
+      if (!empty($this->uploadedFiles)) {
+        foreach ($this->uploadedFiles as $file) {
+          $fileRecord = FileService::saveFile($file, 'uploads/tasks');
+
+          if ($fileRecord) {
+            $taskFile = new TaskFile();
+            $taskFile->task_id = $task->id;
+            $taskFile->file_id = $fileRecord->id;
+            $taskFile->save();
+          }
+        }
+      }
+
+      $transaction->commit();
+      return $task;
+    } catch (\Throwable $e) {
+      $transaction->rollBack();
+
+      Yii::error("Ошибка при создании задания: " . $e->getMessage());
+
+      return null;
     }
-
-    return null;
   }
 
   public function validateCity($attribute)

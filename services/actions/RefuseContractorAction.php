@@ -37,7 +37,7 @@ class RefuseContractorAction extends AbstractAction
     $responseId = $params['responseId'] ?? null;
     $response = Response::findOne($responseId);
 
-    if ($response) {
+    if ($response && $response->task_id === $task->id) {
       $response->setSTATUSToRejected();
 
       return $response->save();

@@ -38,30 +38,35 @@ class CompleteAction extends AbstractAction
     {
 
         $review = $this->getModel();
+
+        if (!$review->load($params) || !$review->validate()) {
+            return false;
+        }
+
         $transaction = Yii::$app->db->beginTransaction();
 
         try {
             $task->STATUS = $task->getNextStatus($this);
 
             if (!$task->save()) {
-                throw new \Exception('Не удалось обновить статус задачи');
+                throw new \Exception('Не удалось обновить статус задания');
             }
 
-            if ($review->load($params)) {
-                $review->task_id = $task->id;
-                $review->customer_id = $task->customer_id;
-                $review->contractor_id = $task->contractor_id;
+            $review->task_id = $task->id;
+            $review->customer_id = $task->customer_id;
+            $review->contractor_id = $task->contractor_id;
 
-                if ($review->validate() && $review->save(false)) {
-                    $transaction->commit();
-
-                    return true;
-                }
+            if (!$review->save(false)) {
+                throw new \Exception('Не удалось сохранить отзыв');
             }
 
-            throw new \Exception('Ошибка валидации или загрузки');
+            $transaction->commit();
+
+            return true;
         } catch (\Throwable $e) {
             $transaction->rollBack();
+
+            Yii::error("Ошибка транзакции при завершении задания: " . $e->getMessage());
 
             return false;
         }

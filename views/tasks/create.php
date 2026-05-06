@@ -39,6 +39,7 @@ $this->registerJsVar('userCity', $userCity);
 
 <main class="main-content main-content--center container">
   <div class="add-task-form regular-form">
+
     <?php $form = ActiveForm::begin([
       'id' => 'task-form',
       'enableClientValidation' => false,
@@ -53,17 +54,16 @@ $this->registerJsVar('userCity', $userCity);
         ],
       ],
     ]); ?>
+
     <h3 class="head-main head-main">Публикация нового задания</h3>
 
     <?= $form->field($taskForm, 'title')->textInput([
       'id' => 'essence-work',
     ]) ?>
 
-
     <?= $form->field($taskForm, 'description')->textarea([
       'id' => 'username',
     ]) ?>
-
 
     <?= $form->field($taskForm, 'category_id')->dropDownList(
       $categories,
@@ -91,17 +91,28 @@ $this->registerJsVar('userCity', $userCity);
         'class' => 'budget-icon'
       ]) ?>
 
-
       <?= $form->field($taskForm, 'deadline_at')->input('date', [
         'id' => 'period-execution'
       ]) ?>
-
     </div>
+
     <p class="form-label">Файлы</p>
     <div class="new-file">
-      Добавить новый файл
+      <?= $form->field($taskForm, 'uploadedFiles[]', [
+        'template' => '{input}',
+        'options' => ['tag' => false]
+      ])->fileInput([
+            'id' => 'file-upload',
+            'multiple' => true,
+            'style' => 'display:none',
+          ]) ?>
+      <label for="file-upload" style="cursor:pointer">
+        Добавить новый файл
+      </label>
     </div>
+
     <?= Html::submitInput('Опубликовать', ['class' => 'button button--blue']) ?>
+
     <?php ActiveForm::end(); ?>
   </div>
 </main>

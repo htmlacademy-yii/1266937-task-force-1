@@ -7,6 +7,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 use app\models\Task;
 use app\models\TaskSearch;
 use app\models\Category;
@@ -33,7 +34,7 @@ class TasksController extends SecuredController
     ]);
   }
   /**
-   * Показывает список задач с фильтрацией
+   * Показывает список заданий с фильтрацией
    * 
    * @return string
    */
@@ -129,6 +130,8 @@ class TasksController extends SecuredController
     $categories = Category::find()->select(['name', 'id'])->indexBy('id')->column();
 
     if ($taskForm->load(Yii::$app->request->post())) {
+      $taskForm->uploadedFiles = UploadedFile::getInstances($taskForm, 'uploadedFiles');
+
       if ($task = $taskForm->createTask()) {
         return $this->redirect(['view', 'id' => $task->id]);
       }
@@ -145,7 +148,7 @@ class TasksController extends SecuredController
     $task = Task::findOne($id);
 
     if (!$task) {
-      throw new NotFoundHttpException("Задание с id {id} не найдено");
+      throw new NotFoundHttpException("Задание с id {$id} не найдено");
     }
 
     $userId = Yii::$app->user->id;
