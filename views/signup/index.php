@@ -62,7 +62,7 @@ use yii\helpers\Html;
 
       <div class="half-wrapper">
 
-        <?= $form->field($signupForm, 'password_repeat')->passwordInput([
+        <?= $form->field($signupForm, 'passwordRepeat')->passwordInput([
           'id' => 'password-repeat-user',
           'class' => false
         ])
@@ -70,7 +70,7 @@ use yii\helpers\Html;
 
       </div>
 
-      <?= $form->field($signupForm, 'is_contractor', [
+      <?= $form->field($signupForm, 'isContractor', [
         'template' => "{input}\n{error}",
       ])->checkbox([
             'id' => 'response-user',

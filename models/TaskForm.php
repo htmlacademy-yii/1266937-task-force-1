@@ -103,6 +103,8 @@ class TaskForm extends Model
    * Валидирует форму и сохраняет данные в таблице заданий
    * 
    * @return Task|null
+   * 
+   * @throws \Throwable
    */
   public function createTask(): Task|null
   {
@@ -156,7 +158,7 @@ class TaskForm extends Model
     } catch (\Throwable $e) {
       $transaction->rollBack();
 
-      Yii::error("Ошибка при создании задания: " . $e->getMessage());
+      Yii::error("Ошибка транзакции при создании задания: " . $e->getMessage());
 
       return null;
     }

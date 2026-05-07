@@ -88,19 +88,19 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'budget' => 'Budget',
-            'deadline_at' => 'Deadline At',
-            'created_at' => 'Created At',
-            'customer_id' => 'Customer ID',
-            'contractor_id' => 'Contractor ID',
-            'category_id' => 'Category ID',
-            'city_id' => 'City ID',
-            'location' => 'Location',
-            'latitude' => 'Latitude',
-            'longitude' => 'Longitude',
-            'STATUS' => 'Status',
+            'title' => 'Название',
+            'description' => 'Описание',
+            'budget' => 'Бюджет',
+            'deadline_at' => 'Срок выполнения',
+            'created_at' => 'Создано',
+            'customer_id' => 'ID заказчика',
+            'contractor_id' => 'ID исполнителя',
+            'category_id' => 'ID категории',
+            'city_id' => 'ID города',
+            'location' => 'Локация',
+            'latitude' => 'Широта',
+            'longitude' => 'Долгота',
+            'STATUS' => 'Статус',
         ];
     }
 

@@ -45,8 +45,8 @@ class UserCategory extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'user_id' => 'User ID',
-            'category_id' => 'Category ID',
+            'user_id' => 'ID пользователя',
+            'category_id' => 'ID категории',
         ];
     }
 
@@ -69,5 +69,4 @@ class UserCategory extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
-
 }

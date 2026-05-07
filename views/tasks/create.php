@@ -59,15 +59,21 @@ $this->registerJsVar('userCity', $userCity);
 
     <?= $form->field($taskForm, 'title')->textInput([
       'id' => 'essence-work',
+      'class' => false
     ]) ?>
 
     <?= $form->field($taskForm, 'description')->textarea([
       'id' => 'username',
+      'class' => false
     ]) ?>
 
     <?= $form->field($taskForm, 'category_id')->dropDownList(
       $categories,
-      ['id' => 'town-user', 'prompt' => 'Выберите категорию']
+      [
+        'id' => 'town-user',
+        'prompt' => 'Выберите категорию',
+        'class' => false
+      ]
     ) ?>
 
     <div class="form-group">
@@ -92,7 +98,8 @@ $this->registerJsVar('userCity', $userCity);
       ]) ?>
 
       <?= $form->field($taskForm, 'deadline_at')->input('date', [
-        'id' => 'period-execution'
+        'id' => 'period-execution',
+        'class' => false
       ]) ?>
     </div>
 

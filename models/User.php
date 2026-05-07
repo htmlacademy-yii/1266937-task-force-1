@@ -112,17 +112,17 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'created_at' => 'Created At',
+            'created_at' => 'Создано',
             'email' => 'Email',
-            'username' => 'Username',
-            'password_hash' => 'Password Hash',
-            'role' => 'Role',
-            'avatar_id' => 'Avatar ID',
-            'city_id' => 'City ID',
-            'birthday' => 'Birthday',
-            'phone' => 'Phone',
-            'telegram' => 'Telegram',
-            'profile_info' => 'Profile Info',
+            'username' => 'Имя пользователя',
+            'password_hash' => 'Пароль',
+            'role' => 'Роль',
+            'avatar_id' => 'ID аватара',
+            'city_id' => 'ID города',
+            'birthday' => 'День рождения',
+            'phone' => 'Телефон',
+            'telegram' => 'Телеграм',
+            'profile_info' => 'Информация о пользователе',
         ];
     }
 

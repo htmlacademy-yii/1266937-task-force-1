@@ -46,14 +46,17 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                 <a href="<?= Url::to(['tasks/create']) ?>" class="link link--nav">Создать задание</a>
                             </li>
                             <li class="list-item">
-                                <a href="#" class="link link--nav">Настройки</a>
+                                <a href="<?= Url::to(['settings/index']) ?>" class="link link--nav">Настройки</a>
                             </li>
                         </ul>
                     </div>
                 </nav>
                 <div class="user-block">
-                    <a href="#">
-                        <img class="user-photo" src="/img/man-glasses.png" width="55" height="55" alt="Аватар">
+                    <a href="<?= Url::to(['users/view', 'id' => Yii::$app->user->id]) ?>">
+                        <img class="user-photo" src="<?= Url::to(
+                            Yii::$app->user->identity?->avatar?->url ?? '/img/avatars/4.png',
+                            true
+                        ) ?>" width="55" height="55" alt="Аватар">
                     </a>
                     <div class="user-menu">
                         <?php if (!Yii::$app->user->isGuest): ?>
@@ -64,7 +67,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <div class="popup-head">
                             <ul class="popup-menu">
                                 <li class="menu-item">
-                                    <a href="#" class="link">Настройки</a>
+                                    <a href="<?= Url::to(['settings/index']) ?>" class="link">Настройки</a>
                                 </li>
                                 <li class="menu-item">
                                     <a href="#" class="link">Связаться с нами</a>

@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m260506_050054_add_columns_to_file extends Migration
+class m260506_050054_add_columns_to_files extends Migration
 {
     /**
      * {@inheritdoc}
@@ -18,7 +18,7 @@ class m260506_050054_add_columns_to_file extends Migration
      */
     public function safeDown()
     {
-        echo "m260506_050054_add_columns_to_file cannot be reverted.\n";
+        echo "m260506_050054_add_columns_to_files cannot be reverted.\n";
 
         return false;
     }
@@ -32,7 +32,7 @@ class m260506_050054_add_columns_to_file extends Migration
 
     public function down()
     {
-        echo "m260506_050054_add_columns_to_file cannot be reverted.\n";
+        echo "m260506_050054_add_columns_to_files cannot be reverted.\n";
 
         return false;
     }
