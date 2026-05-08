@@ -23,7 +23,7 @@ use yii\helpers\Html;
       ->field($model, 'category_id', [
         'template' => '<div class="checkbox-wrapper">{input} </div>',
         'options' => [
-          'tag' => false // Отключает стандартную обертку
+          'tag' => false
         ],
       ])
       ->checkboxList($categories, [
@@ -32,7 +32,7 @@ use yii\helpers\Html;
           => Html::checkbox($name, $checked, [
             'value' => $value,
             'id' => "category-{$value}",
-            'label' => Html::encode($label), // Обернет в label
+            'label' => Html::encode($label),
             'labelOptions' => [
               'class' => 'control-label',
             ],
@@ -73,7 +73,7 @@ use yii\helpers\Html;
 
     <?= $form
       ->field($model, 'interval', [
-        'template' => '{input}', // Лейбл над селектом
+        'template' => '{input}',
         'options' => [
           'tag' => false
         ]

@@ -1,10 +1,13 @@
 <?php
 
+/** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $tasksDataProvider */
 /** @var app\models\TaskSearch $searchModel */
 /** @var array $categories */
 
 use yii\widgets\LinkPager;
+
+$this->title = 'Новые задания';
 
 ?>
 

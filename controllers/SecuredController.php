@@ -18,7 +18,7 @@ abstract class SecuredController extends Controller
         'rules' => [
           [
             'allow' => true,
-            'roles' => ['@'], // залогиненные пользователи
+            'roles' => ['@'],
           ]
         ],
         'denyCallback' => function ($rule, $action) {

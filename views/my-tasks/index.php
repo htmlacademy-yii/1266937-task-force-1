@@ -1,7 +1,14 @@
 <?php
 
+/** @var yii\web\View $this */
+/** @var yii\data\ActiveDataProvider $tasksDataProvider */
+/** @var array $menuItems */
+/** @var string $currentStatus */
+
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+$this->title = 'Мои задания';
 
 ?>
 
@@ -19,7 +26,7 @@ use yii\helpers\Url;
     </ul>
   </div>
   <div class="left-column left-column--task">
-    <h3 class="head-main head-regular"><?= Html::encode($menuItems[(string) $currentStatus] ?? 'Мои задания') ?></h3>
+    <h3 class="head-main head-regular"><?= Html::encode($menuItems[$currentStatus] ?? 'Мои задания') ?></h3>
 
     <?php foreach ($tasksDataProvider->getModels() as $task): ?>
       <?= $this->render('/tasks/_item', ['task' => $task]) ?>

@@ -4,7 +4,6 @@ namespace app\services\actions;
 
 use Yii;
 use app\models\Task;
-use app\models\Response;
 
 class AcceptAction extends AbstractAction
 {
@@ -20,7 +19,7 @@ class AcceptAction extends AbstractAction
 
     public function isAllowed(int $userId, int $customerId, ?int $contractorId, string $status): bool
     {
-        return $userId === $customerId && $contractorId === null;
+        return $userId === $customerId && $status === Task::STATUS_NEW && $contractorId === null;
     }
 
     public function getType(): string
@@ -36,7 +35,9 @@ class AcceptAction extends AbstractAction
     public function execute(Task $task, array $params = []): bool
     {
         $responseId = $params['responseId'] ?? null;
-        $response = Response::findOne($responseId);
+        $response = $task->getResponses()
+            ->andWhere(['id' => $responseId])
+            ->one();
 
         if (!$response) {
             return false;
@@ -49,13 +50,13 @@ class AcceptAction extends AbstractAction
             $task->STATUS = $task->getNextStatus($this);
 
             if (!$task->save()) {
-                throw new \Exception();
+                throw new \Exception('Не удалось обновить статус задания');
             }
 
             $response->setSTATUSToAccepted();
 
             if (!$response->save()) {
-                throw new \Exception();
+                throw new \Exception('Не удалось принять отклик');
             }
 
             $transaction->commit();
@@ -63,6 +64,8 @@ class AcceptAction extends AbstractAction
             return true;
         } catch (\Throwable $e) {
             $transaction->rollBack();
+
+            Yii::error("Ошибка транзакции при принятии отклика: " . $e->getMessage());
 
             return false;
         }

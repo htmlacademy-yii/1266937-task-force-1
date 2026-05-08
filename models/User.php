@@ -21,6 +21,7 @@ use yii\web\IdentityInterface;
  * @property string|null $phone
  * @property string|null $telegram
  * @property string|null $profile_info
+ * @property int $reviewsCount
  *
  * @property File $avatar
  * @property Category[] $categories
@@ -112,17 +113,17 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'created_at' => 'Created At',
+            'created_at' => 'Создано',
             'email' => 'Email',
-            'username' => 'Username',
-            'password_hash' => 'Password Hash',
-            'role' => 'Role',
-            'avatar_id' => 'Avatar ID',
-            'city_id' => 'City ID',
-            'birthday' => 'Birthday',
-            'phone' => 'Phone',
-            'telegram' => 'Telegram',
-            'profile_info' => 'Profile Info',
+            'username' => 'Имя пользователя',
+            'password_hash' => 'Пароль',
+            'role' => 'Роль',
+            'avatar_id' => 'ID аватара',
+            'city_id' => 'ID города',
+            'birthday' => 'День рождения',
+            'phone' => 'Телефон',
+            'telegram' => 'Телеграм',
+            'profile_info' => 'Информация о пользователе',
         ];
     }
 
@@ -313,5 +314,60 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->getContractorTasks()
             ->andWhere(['status' => Task::STATUS_IN_PROGRESS])
             ->exists();
+    }
+
+    /**
+     * Рассчитывает рейтинг пользователя
+     * Формула: сумма всех оценок / (количество отзывов + количество проваленных заданий)
+     * 
+     * @return float Рейтинг пользователя от 1 до 5
+     */
+    public function getRating(): float
+    {
+        $sum = (float) $this->getReceivedReviews()->sum('rating') ?: 0;
+        $reviewsCount = (int) $this->getReceivedReviews()->count();
+        $failedCount = (int) $this->getFailedTasksCount();
+
+        $total = $reviewsCount + $failedCount;
+
+        return $total > 0 ? round($sum / $total, 2) : 0;
+    }
+
+    /**
+     * Рассчитывает место пользователя в рейтинге
+     * Формула: общий балл пользователя, равный среднему арифметическому по всем оценкам за выполненные заказы
+     * 
+     * @return int Порядковый номер в списке исполнителей
+     */
+    public function getRank(): int
+    {
+        $currentRating = $this->getRating();
+
+        if ($currentRating == 0) {
+            return (int) self::find()->where(['role' => self::ROLE_CONTRACTOR])->count();
+        }
+
+        $contractors = self::find()
+            ->where(['role' => self::ROLE_CONTRACTOR])
+            ->all();
+
+        $rank = 0;
+        foreach ($contractors as $contractor) {
+            if ($contractor->getRating() > $currentRating) {
+                $rank++;
+            }
+        }
+
+        return $rank + 1;
+    }
+
+    /**
+     * Возвращает количество полученных отзывов
+     * 
+     * @return int Количество отзывов
+     */
+    public function getReviewsCount(): int
+    {
+        return $this->getReceivedReviews()->count();
     }
 }

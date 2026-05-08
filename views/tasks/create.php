@@ -1,5 +1,6 @@
 <?php
 
+/** @var yii\web\View $this */
 /** @var app\models\TaskForm $taskForm */
 /** @var array $categories */
 
@@ -12,6 +13,8 @@ $this->registerJsFile('@web/js/init-autocomplete.js', ['depends' => [VendorAsset
 
 $userCity = Yii::$app->user->identity->city->name ?? '';
 $this->registerJsVar('userCity', $userCity);
+
+$this->title = 'Создать задание';
 
 ?>
 
@@ -39,6 +42,7 @@ $this->registerJsVar('userCity', $userCity);
 
 <main class="main-content main-content--center container">
   <div class="add-task-form regular-form">
+
     <?php $form = ActiveForm::begin([
       'id' => 'task-form',
       'enableClientValidation' => false,
@@ -53,21 +57,26 @@ $this->registerJsVar('userCity', $userCity);
         ],
       ],
     ]); ?>
+
     <h3 class="head-main head-main">Публикация нового задания</h3>
 
     <?= $form->field($taskForm, 'title')->textInput([
       'id' => 'essence-work',
+      'class' => false
     ]) ?>
-
 
     <?= $form->field($taskForm, 'description')->textarea([
       'id' => 'username',
+      'class' => false
     ]) ?>
-
 
     <?= $form->field($taskForm, 'category_id')->dropDownList(
       $categories,
-      ['id' => 'town-user', 'prompt' => 'Выберите категорию']
+      [
+        'id' => 'town-user',
+        'prompt' => 'Выберите категорию',
+        'class' => false
+      ]
     ) ?>
 
     <div class="form-group">
@@ -91,17 +100,29 @@ $this->registerJsVar('userCity', $userCity);
         'class' => 'budget-icon'
       ]) ?>
 
-
       <?= $form->field($taskForm, 'deadline_at')->input('date', [
-        'id' => 'period-execution'
+        'id' => 'period-execution',
+        'class' => false
       ]) ?>
-
     </div>
+
     <p class="form-label">Файлы</p>
     <div class="new-file">
-      Добавить новый файл
+      <?= $form->field($taskForm, 'uploadedFiles[]', [
+        'template' => '{input}',
+        'options' => ['tag' => false]
+      ])->fileInput([
+            'id' => 'file-upload',
+            'multiple' => true,
+            'style' => 'display:none',
+          ]) ?>
+      <label for="file-upload" style="cursor:pointer">
+        Добавить новый файл
+      </label>
     </div>
+
     <?= Html::submitInput('Опубликовать', ['class' => 'button button--blue']) ?>
+
     <?php ActiveForm::end(); ?>
   </div>
 </main>

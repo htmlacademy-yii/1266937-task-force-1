@@ -39,7 +39,7 @@ class MyTasksController extends SecuredController
     $isTasksNew = ['STATUS' => Task::STATUS_NEW];
     $isTasksInProgress = ['STATUS' => Task::STATUS_IN_PROGRESS];
     $isTasksExpired = ['and', $isTasksInProgress, ['<', 'deadline_at', $now]];
-    $isTasksCurrent = ['and', $isTasksInProgress, ['>=', 'deadline_at', $now]];
+    $isTasksCurrent = ['and', $isTasksInProgress, ['or', ['>=', 'deadline_at', $now], ['is', 'deadline_at', null]]];
     $customerCompletedTasks = ['in', 'STATUS', [Task::STATUS_CANCELED, Task::STATUS_COMPLETED, Task::STATUS_FAILED]];
     $executorCompletedTasks = ['in', 'STATUS', [Task::STATUS_COMPLETED, Task::STATUS_FAILED]];
 

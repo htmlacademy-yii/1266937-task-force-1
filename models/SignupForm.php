@@ -13,8 +13,8 @@ class SignupForm extends Model
   public ?string $email = null;
   public ?int $city_id = null;
   public ?string $password = null;
-  public ?string $password_repeat = null;
-  public ?bool $is_contractor = false;
+  public ?string $passwordRepeat = null;
+  public ?bool $isContractor = false;
 
   /**
    * {@inheritdoc}
@@ -23,7 +23,7 @@ class SignupForm extends Model
   {
     return [
       [
-        ['username', 'email', 'password', 'password_repeat', 'city_id'],
+        ['username', 'email', 'password', 'passwordRepeat', 'city_id'],
         'required',
         'message' => 'Обязательное поле',
       ],
@@ -42,7 +42,7 @@ class SignupForm extends Model
         'tooShort' => 'Пароль должен быть не менее 8 символов'
       ],
       [
-        ['password_repeat'],
+        ['passwordRepeat'],
         'compare',
         'compareAttribute' => 'password',
         'message' => 'Пароли не совпадают'
@@ -55,7 +55,7 @@ class SignupForm extends Model
         'targetAttribute' => ['city_id' => 'id'],
         'message' => 'Выберите город из списка',
       ],
-      [['is_contractor'], 'boolean'],
+      [['isContractor'], 'boolean'],
     ];
   }
 
@@ -69,8 +69,8 @@ class SignupForm extends Model
       'email' => 'Email',
       'city_id' => 'Город',
       'password' => 'Пароль',
-      'password_repeat' => 'Повтор пароля',
-      'is_contractor' => 'я собираюсь откликаться на заказы',
+      'passwordRepeat' => 'Повтор пароля',
+      'isContractor' => 'я собираюсь откликаться на заказы',
     ];
   }
 
@@ -88,7 +88,7 @@ class SignupForm extends Model
       $user->email = $this->email;
       $user->city_id = $this->city_id;
       $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
-      $user->role = $this->is_contractor ? User::ROLE_CONTRACTOR : User::ROLE_CUSTOMER;
+      $user->role = $this->isContractor ? User::ROLE_CONTRACTOR : User::ROLE_CUSTOMER;
 
       if ($user->save(false)) {
         $auth = Yii::$app->authManager;

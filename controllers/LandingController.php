@@ -24,7 +24,7 @@ class LandingController extends Controller
         'rules' => [
           [
             'allow' => true,
-            'roles' => ['?'], // анонимные пользователи
+            'roles' => ['?'],
           ],
           [
             'actions' => ['logout'],

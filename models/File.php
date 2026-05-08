@@ -10,6 +10,8 @@ use Yii;
  * @property int $id
  * @property string $url
  * @property string $file_path
+ * @property string $name
+ * @property int $size  
  *
  * @property TaskFile[] $taskFiles
  * @property Task[] $tasks
@@ -17,8 +19,6 @@ use Yii;
  */
 class File extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -33,8 +33,9 @@ class File extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['url', 'file_path'], 'required'],
-            [['url', 'file_path'], 'string', 'max' => 255],
+            [['url', 'file_path', 'name', 'size'], 'required'],
+            [['size'], 'integer'],
+            [['name', 'url', 'file_path'], 'string', 'max' => 255],
         ];
     }
 
@@ -46,7 +47,9 @@ class File extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'url' => 'Url',
-            'file_path' => 'File Path',
+            'file_path' => 'Путь к файлу',
+            'name' => 'Оригинальное имя',
+            'size' => 'Размер в байтах',
         ];
     }
 

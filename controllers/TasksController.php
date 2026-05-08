@@ -7,6 +7,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 use app\models\Task;
 use app\models\TaskSearch;
 use app\models\Category;
@@ -20,20 +21,29 @@ class TasksController extends SecuredController
    */
   public function behaviors()
   {
-    return ArrayHelper::merge(parent::behaviors(), [
-      'access' => [
-        'rules' => [
-          [
-            'actions' => ['create'],
-            'allow' => true,
-            'roles' => ['customer'],
-          ],
-        ],
+    $behaviors = parent::behaviors();
+
+    $behaviors['access']['rules'] = [
+      [
+        'actions' => ['create'],
+        'allow' => true,
+        'roles' => ['customer'],
       ],
-    ]);
+      [
+        'actions' => ['create'],
+        'allow' => false,
+      ],
+      [
+        'allow' => true,
+        'roles' => ['@'],
+      ],
+    ];
+
+    return $behaviors;
   }
+
   /**
-   * Показывает список задач с фильтрацией
+   * Показывает список заданий с фильтрацией
    * 
    * @return string
    */
@@ -46,7 +56,7 @@ class TasksController extends SecuredController
       ->where(['tasks.STATUS' => Task::STATUS_NEW])
       ->with('category');
 
-    $searchModel->load(Yii::$app->request->get());
+    $searchModel->load(Yii::$app->request->get(), '');
 
     if ($searchModel->validate()) {
       $query->andFilterWhere(['category_id' => $searchModel->category_id]);
@@ -110,6 +120,14 @@ class TasksController extends SecuredController
       ? $failedModel
       : new Review();
 
+    if ($failedModel instanceof Review) {
+      $reviewModel->validate();
+    }
+
+    if ($failedModel instanceof \app\models\Response) {
+      $responseModel->validate();
+    }
+
     return $this->render('view', [
       'task' => $task,
       'responsesDataProvider' => $responsesDataProvider,
@@ -129,6 +147,8 @@ class TasksController extends SecuredController
     $categories = Category::find()->select(['name', 'id'])->indexBy('id')->column();
 
     if ($taskForm->load(Yii::$app->request->post())) {
+      $taskForm->uploadedFiles = UploadedFile::getInstances($taskForm, 'uploadedFiles');
+
       if ($task = $taskForm->createTask()) {
         return $this->redirect(['view', 'id' => $task->id]);
       }
@@ -145,7 +165,7 @@ class TasksController extends SecuredController
     $task = Task::findOne($id);
 
     if (!$task) {
-      throw new NotFoundHttpException("Задание с id {id} не найдено");
+      throw new NotFoundHttpException("Задание с id {$id} не найдено");
     }
 
     $userId = Yii::$app->user->id;
