@@ -41,7 +41,7 @@ class AccountSettingsForm extends Model
       ['birthday', 'date', 'format' => 'php:Y-m-d', 'message' => 'Выберите дату в календаре'],
       ['phone', 'match', 'pattern' => '/^\d{11}$/', 'message' => 'Введите номер из 11 символов'],
       ['telegram', 'string', 'max' => 64, 'tooLong' => 'Максимальная длина 64 символа'],
-      ['avatarFile', 'file', 'extensions' => 'png, jpg, jpeg', 'maxSize' => 1024 * 1024 * 2],
+      ['avatarFile', 'file', 'extensions' => 'png, jpg, jpeg', 'maxSize' => 1024 * 1024 * 5],
       ['profile_info', 'string'],
       ['categoryIds', 'each', 'rule' => ['exist', 'targetClass' => Category::class, 'targetAttribute' => 'id']],
     ];
@@ -61,13 +61,6 @@ class AccountSettingsForm extends Model
     ];
   }
 
-  /**
-   * Summary of loadData
-   * @param mixed $user
-   * @return void
-   * 
-   * @throws \Throwable
-   */
   public function loadData($user)
   {
     $this->_user = $user;
@@ -95,13 +88,7 @@ class AccountSettingsForm extends Model
         $newAvatarFile = FileService::saveFile($this->avatarFile, 'uploads/avatars');
 
         if ($newAvatarFile) {
-          $oldAvatarId = $this->_user->avatar_id;
-
           $this->_user->avatar_id = $newAvatarFile->id;
-
-          if ($oldAvatarId) {
-            FileService::deleteFile($oldAvatarId);
-          }
         }
       }
 

@@ -39,8 +39,9 @@ class Review extends \yii\db\ActiveRecord
         return [
             [['created_at'], 'safe'],
             [['task_id', 'customer_id', 'contractor_id', 'text_comment'], 'required'],
-            [['rating'], 'default', 'value' => 5],
-            [['task_id', 'customer_id', 'contractor_id', 'rating'], 'integer'],
+            [['rating'], 'required', 'message' => 'Выберите количество звезд'],
+            [['rating'], 'integer', 'min' => 1, 'max' => 5],
+            [['task_id', 'customer_id', 'contractor_id'], 'integer'],
             [['text_comment'], 'string'],
             [['task_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['task_id' => 'id']],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['customer_id' => 'id']],
@@ -93,5 +94,4 @@ class Review extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
-
 }

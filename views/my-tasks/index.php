@@ -1,11 +1,14 @@
 <?php
 
+/** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $tasksDataProvider */
 /** @var array $menuItems */
 /** @var string $currentStatus */
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+$this->title = 'Мои задания';
 
 ?>
 

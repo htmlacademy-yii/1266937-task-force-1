@@ -29,7 +29,25 @@ class RespondAction extends AbstractAction
 
     public function isAllowed(int $userId, int $customerId, ?int $contractorId, string $status): bool
     {
-        return $userId !== $customerId && $contractorId === null;
+        if (!Yii::$app->authManager->checkAccess($userId, 'contractor')) {
+            return false;
+        }
+
+        if ($userId === $customerId || $contractorId !== null) {
+            return false;
+        }
+
+        $taskId = Yii::$app->request->get('id');
+
+        $isUserResponded = Response::find()
+            ->where(['task_id' => $taskId, 'contractor_id' => $userId])
+            ->exists();
+
+        if ($isUserResponded) {
+            return false;
+        }
+
+        return true;
     }
 
     public function execute($task, $params = []): bool

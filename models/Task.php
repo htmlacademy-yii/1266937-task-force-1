@@ -281,7 +281,6 @@ class Task extends \yii\db\ActiveRecord
      */
     public function getNextStatus(AbstractAction $action): ?string
     {
-        // Возвращает имя класса объекта
         $actionClass = \get_class($action);
 
         return match ($actionClass) {
@@ -326,7 +325,6 @@ class Task extends \yii\db\ActiveRecord
     {
         $actions = $this->getActionsByStatus($this->STATUS);
 
-        // Фильтр объектов в зависимости от роли пользователя
         return array_filter(
             $actions,
             fn($action) => $action->getType() === $type

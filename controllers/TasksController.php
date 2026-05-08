@@ -21,18 +21,27 @@ class TasksController extends SecuredController
    */
   public function behaviors()
   {
-    return ArrayHelper::merge(parent::behaviors(), [
-      'access' => [
-        'rules' => [
-          [
-            'actions' => ['create'],
-            'allow' => true,
-            'roles' => ['customer'],
-          ],
-        ],
+    $behaviors = parent::behaviors();
+
+    $behaviors['access']['rules'] = [
+      [
+        'actions' => ['create'],
+        'allow' => true,
+        'roles' => ['customer'],
       ],
-    ]);
+      [
+        'actions' => ['create'],
+        'allow' => false,
+      ],
+      [
+        'allow' => true,
+        'roles' => ['@'],
+      ],
+    ];
+
+    return $behaviors;
   }
+
   /**
    * Показывает список заданий с фильтрацией
    * 
@@ -47,7 +56,7 @@ class TasksController extends SecuredController
       ->where(['tasks.STATUS' => Task::STATUS_NEW])
       ->with('category');
 
-    $searchModel->load(Yii::$app->request->get());
+    $searchModel->load(Yii::$app->request->get(), '');
 
     if ($searchModel->validate()) {
       $query->andFilterWhere(['category_id' => $searchModel->category_id]);
@@ -110,6 +119,14 @@ class TasksController extends SecuredController
     $reviewModel = ($failedModel instanceof Review)
       ? $failedModel
       : new Review();
+
+    if ($failedModel instanceof Review) {
+      $reviewModel->validate();
+    }
+
+    if ($failedModel instanceof \app\models\Response) {
+      $responseModel->validate();
+    }
 
     return $this->render('view', [
       'task' => $task,

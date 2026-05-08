@@ -36,10 +36,17 @@ class CompleteAction extends AbstractAction
 
     public function execute(Task $task, array $params = []): bool
     {
-
         $review = $this->getModel();
 
-        if (!$review->load($params) || !$review->validate()) {
+        if (!$review->load($params) && !$review->load($params, '')) {
+            return false;
+        }
+
+        $review->task_id = $task->id;
+        $review->customer_id = $task->customer_id;
+        $review->contractor_id = $task->contractor_id;
+
+        if (!$review->validate()) {
             return false;
         }
 
@@ -51,10 +58,6 @@ class CompleteAction extends AbstractAction
             if (!$task->save()) {
                 throw new \Exception('Не удалось обновить статус задания');
             }
-
-            $review->task_id = $task->id;
-            $review->customer_id = $task->customer_id;
-            $review->contractor_id = $task->contractor_id;
 
             if (!$review->save(false)) {
                 throw new \Exception('Не удалось сохранить отзыв');

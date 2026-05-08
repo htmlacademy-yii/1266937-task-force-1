@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\data\ActiveDataProvider;
 use app\models\User;
@@ -9,7 +10,7 @@ use app\models\User;
 class UsersController extends SecuredController
 {
 
-  public function actionView(int $id): string
+  public function actionView($id): string
   {
     $user = User::find()
       ->where(['id' => $id])
@@ -17,7 +18,11 @@ class UsersController extends SecuredController
       ->one();
 
     if (!$user) {
-      throw new NotFoundHttpException("Пользователь с ID {$id} не найден");
+      throw new NotFoundHttpException("Пользователь не найден");
+    }
+
+    if (!Yii::$app->authManager->getAssignment('contractor', $user->id)) {
+      throw new NotFoundHttpException("Страница не найдена");
     }
 
     $reviewsDataProvider = new ActiveDataProvider([

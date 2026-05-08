@@ -1,5 +1,6 @@
 <?php
 
+/** @var yii\web\View $this */
 /** @var app\models\TaskForm $taskForm */
 /** @var array $categories */
 
@@ -12,6 +13,8 @@ $this->registerJsFile('@web/js/init-autocomplete.js', ['depends' => [VendorAsset
 
 $userCity = Yii::$app->user->identity->city->name ?? '';
 $this->registerJsVar('userCity', $userCity);
+
+$this->title = 'Создать задание';
 
 ?>
 

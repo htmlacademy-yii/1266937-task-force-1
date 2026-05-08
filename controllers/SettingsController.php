@@ -6,15 +6,17 @@ use Yii;
 use yii\web\UploadedFile;
 use yii\helpers\ArrayHelper;
 use app\models\AccountSettingsForm;
+use app\models\SecuritySettingsForm;
 use app\models\User;
 use app\models\Category;
 
 class SettingsController extends SecuredController
 {
   /**
-   * Summary of actionIndex
+   *Показывает форму настроек профиля
    * 
-   * @return string|Yii\web\Response
+   * @return string|Yii\web\Response Возвращает отрендеренную страницу настроек 
+   *                                  или объект Response при успешном редиректе
    */
   public function actionIndex()
   {
@@ -28,6 +30,7 @@ class SettingsController extends SecuredController
       $accountSettingsForm->avatarFile = UploadedFile::getInstance($accountSettingsForm, 'avatarFile');
 
       if ($accountSettingsForm->save()) {
+
         return $this->redirect(['users/view', 'id' => $user->id]);
       }
     }
@@ -36,6 +39,29 @@ class SettingsController extends SecuredController
       'accountSettingsForm' => $accountSettingsForm,
       'user' => $user,
       'categories' => $categories,
+    ]);
+  }
+
+  /**
+   * Показывает форму настроек безопасности и обрабатывает изменение пароля/приватности
+   * 
+   * @return string|Yii\web\Response Возвращает отрендеренную страницу безопасности или объект Response при успешном редиректе
+   */
+  public function actionSecurity()
+  {
+    $user = User::findOne(Yii::$app->user->id);
+    $securitySettingsForm = new SecuritySettingsForm();
+    $securitySettingsForm->loadData($user);
+
+    $isContractor = Yii::$app->user->can('contractor');
+
+    if ($securitySettingsForm->load(Yii::$app->request->post()) && $securitySettingsForm->save()) {
+      return $this->redirect(['users/view', 'id' => $user->id]);
+    }
+
+    return $this->render('security', [
+      'securitySettingsForm' => $securitySettingsForm,
+      'isContractor' => $isContractor,
     ]);
   }
 }

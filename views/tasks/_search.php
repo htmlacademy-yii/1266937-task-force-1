@@ -73,7 +73,7 @@ use yii\helpers\Html;
 
     <?= $form
       ->field($model, 'interval', [
-        'template' => '{input}', // Лейбл над селектом
+        'template' => '{input}',
         'options' => [
           'tag' => false
         ]

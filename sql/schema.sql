@@ -1,9 +1,3 @@
-DROP DATABASE taskforce;
-
-CREATE DATABASE IF NOT EXISTS taskforce DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
-
-USE taskforce;
-
 CREATE TABLE IF NOT EXISTS categories (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
@@ -22,7 +16,9 @@ CREATE TABLE IF NOT EXISTS cities (
 CREATE TABLE IF NOT EXISTS files (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   url VARCHAR(255) NOT NULL,
-  file_path VARCHAR(255) NOT NULL
+  file_path VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  size INT UNSIGNED NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -32,12 +28,12 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('customer', 'contractor') NOT NULL,
-  avatar_id INT UNSIGNED,
+  avatar_id INT UNSIGNED NULL,
   city_id INT UNSIGNED NOT NULL,
-  birthday DATE,
-  phone CHAR(11),
-  telegram VARCHAR(64),
-  profile_info TEXT,
+  birthday DATE NULL,
+  phone CHAR(11) NULL,
+  telegram VARCHAR(64) NULL,
+  profile_info TEXT NULL,
   UNIQUE INDEX idx_email (email),
   FOREIGN KEY (city_id) REFERENCES cities(id),
   FOREIGN KEY (avatar_id) REFERENCES files(id)

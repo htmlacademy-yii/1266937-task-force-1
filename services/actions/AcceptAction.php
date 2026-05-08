@@ -19,7 +19,7 @@ class AcceptAction extends AbstractAction
 
     public function isAllowed(int $userId, int $customerId, ?int $contractorId, string $status): bool
     {
-        return $userId === $customerId && $contractorId === null;
+        return $userId === $customerId && $status === Task::STATUS_NEW && $contractorId === null;
     }
 
     public function getType(): string
@@ -56,7 +56,7 @@ class AcceptAction extends AbstractAction
             $response->setSTATUSToAccepted();
 
             if (!$response->save()) {
-                throw new \Exception('Не удалось добавить отклик');
+                throw new \Exception('Не удалось принять отклик');
             }
 
             $transaction->commit();

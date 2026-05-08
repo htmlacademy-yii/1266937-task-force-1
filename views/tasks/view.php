@@ -1,5 +1,6 @@
 <?php
 
+/** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var app\models\Task $task */
 /** @var app\models\Response $responseModel */
@@ -8,8 +9,12 @@
 use yii\helpers\Html;
 use yii\widgets\ListView;
 use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 use app\components\ButtonActionWidget;
 use \app\services\actions\AbstractAction;
+use app\components\UserRatingWidget;
+
+$this->title = 'Просмотр задания';
 
 $apiKey = Yii::$app->params['geocoderApiKey'];
 $this->registerJsFile("//api-maps.yandex.ru/2.1/?apikey={$apiKey}&lang=ru_RU", ['position' => \yii\web\View::POS_HEAD]);
@@ -61,10 +66,10 @@ if ($task->latitude && $task->longitude) {
       </div>
     <?php endif; ?>
 
-    <h4 class="head-regular">Отклики на задание</h4>
+    <?php if ($responsesDataProvider->getTotalCount() > 0): ?>
+      <h4 class="head-regular">Отклики на задание</h4>
 
-    <?= ListView::widget(
-      [
+      <?= ListView::widget([
         'dataProvider' => $responsesDataProvider,
         'itemView' => '_response',
         'viewParams' => [
@@ -73,9 +78,8 @@ if ($task->latitude && $task->longitude) {
         'layout' => '{items}',
         'options' => ['tag' => false],
         'itemOptions' => ['tag' => false],
-      ]
-    )
-      ?>
+      ]) ?>
+    <?php endif; ?>
 
   </div>
 
@@ -124,7 +128,8 @@ if ($task->latitude && $task->longitude) {
       Вы собираетесь отказаться от выполнения этого задания.<br>
       Это действие плохо скажется на вашем рейтинге и увеличит счетчик проваленных заданий.
     </p>
-    <a class="button button--pop-up button--orange">Отказаться</a>
+    <a href="<?= Url::to(['tasks/handle', 'id' => $task->id, 'actionCodeName' => 'refusal']) ?>"
+      class="button button--pop-up button--orange" data-method="post">Отказаться</a>
     <div class="button-container">
       <button class="button--close" type="button">Закрыть окно</button>
     </div>
@@ -163,9 +168,14 @@ if ($task->latitude && $task->longitude) {
 
       <p class="completion-head control-label">Оценка работы</p>
 
-      <div class="stars-rating big active-stars">
-        <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
-      </div>
+      <?= $form->field($reviewModel, 'rating', [
+        'options' => ['class' => 'form-group'],
+        'template' => "{input}\n{error}",
+        'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
+      ])->widget(UserRatingWidget::class, [
+            'sizeClass' => 'big',
+            'readOnly' => false
+          ])->label(false) ?>
 
       <?= Html::submitInput('Завершить', [
         'class' => 'button button--pop-up button--blue',

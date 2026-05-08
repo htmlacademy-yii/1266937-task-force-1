@@ -1,9 +1,12 @@
 <?php
 
+/** @var yii\web\View $this */
 /** @var app\models\SignupForm $signupForm */
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+
+$this->title = 'Регистрация';
 
 ?>
 

@@ -15,17 +15,9 @@ $this->title = 'Мой профиль';
 ?>
 
 <main class="main-content main-content--left container">
-  <div class="left-menu left-menu--edit">
-    <h3 class="head-main head-task">Настройки</h3>
-    <ul class="side-menu-list">
-      <li class="side-menu-item side-menu-item--active">
-        <a class="link link--nav">Мой профиль</a>
-      </li>
-      <li class="side-menu-item">
-        <a href="<?= Url::to(['settings/security']) ?>" class="link link--nav">Безопасность</a>
-      </li>
-    </ul>
-  </div>
+
+  <?= $this->render('_menu') ?>
+
   <div class="my-profile-form">
 
     <?php $form = ActiveForm::begin([
@@ -53,7 +45,7 @@ $this->title = 'Мой профиль';
         <p class="form-label">Аватар</p>
         <img class="avatar-preview" src="<?= Url::to($user->avatar
           ? $user->avatar->url
-          : '/img/avatars/4.png', true) ?>" width="83" height="83">
+          : '/img/man-glasses.jpg', true) ?>" width="83" height="83">
 
       </div>
 
@@ -108,21 +100,23 @@ $this->title = 'Мой профиль';
       'class' => false
     ]) ?>
 
-    <div class="form-group">
-      <p class="form-label">Выбор специализаций</p>
+    <?php if ($user->isRoleContractor()): ?>
+      <div class="form-group">
+        <p class="form-label">Выбор специализаций</p>
 
-      <?= $form->field($accountSettingsForm, 'categoryIds', [
-        'options' => ['tag' => false],
-        'template' => "{input}\n{error}",
-      ])->checkboxList($categories, [
-            'tag' => 'div',
-            'class' => 'checkbox-profile',
-            'itemOptions' => [
-              'labelOptions' => ['class' => 'control-label'],
-            ],
-          ]) ?>
+        <?= $form->field($accountSettingsForm, 'categoryIds', [
+          'options' => ['tag' => false],
+          'template' => "{input}\n{error}",
+        ])->checkboxList($categories, [
+              'tag' => 'div',
+              'class' => 'checkbox-profile',
+              'itemOptions' => [
+                'labelOptions' => ['class' => 'control-label'],
+              ],
+            ]) ?>
 
-    </div>
+      </div>
+    <?php endif; ?>
 
     <?= Html::submitInput('Сохранить', ['class' => 'button button--blue']) ?>.
 

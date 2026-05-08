@@ -2,24 +2,37 @@
 
 /** @var app\models\Response $model */
 /** @var app\models\Task $task */
+/** @var app\models\User $user */
 
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\components\ButtonActionWidget;
 use app\services\actions\AbstractAction;
+use app\components\UserRatingWidget;
 
 ?>
 
 <div class="response-card">
   <img class="customer-photo"
-    src="<?= Url::to('@web/' . ($model->contractor->avatar?->url ?? 'img/man-sweater.png')) ?>" width="146" height="156"
+    src="<?= Url::to('@web' . ($model->contractor->avatar?->url ?? '/img/man-glasses.png')) ?>" width="146" height="156"
     alt="Фото заказчиков">
   <div class="feedback-wrapper">
     <a href="#" class="link link--block link--big"><?= Html::encode($model->contractor->username ?? 'Аноним') ?></a>
     <div class="response-wrapper">
-      <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span
-          class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span></div>
-      <p class="reviews">2 отзыва</p>
+
+      <?= UserRatingWidget::widget([
+        'model' => $model->contractor,
+        'attribute' => 'rating',
+        'readOnly' => true,
+        'showValue' => false,
+        'sizeClass' => 'small',
+      ]); ?>
+
+      <p class="reviews">
+        <?= Yii::t('app', '{n, plural, =0{нет отзывов} one{# отзыв} few{# отзыва} many{# отзывов} other{# отзыва}}', [
+          'n' => $model->contractor->reviewsCount
+        ]) ?>
+      </p>
     </div>
     <p class="response-message">
       <?= Html::encode($model->text_comment) ?>

@@ -20,12 +20,16 @@ class FileService
    */
   public static function saveFile(UploadedFile $file, string $folder = 'uploads'): ?File
   {
+    $folder = ltrim($folder, '/');
     $folderPath = Yii::getAlias("@webroot/{$folder}");
 
     try {
+      if (!is_dir($folderPath)) {
+        FileHelper::createDirectory($folderPath, 0775);
+      }
+
       $fileHash = Yii::$app->security->generateRandomString(12);
-      $fileExtention = $file->getExtension();
-      $newName = "{$fileHash}.{$fileExtention}";
+      $newName = "{$fileHash}.{$file->getExtension()}";
 
       $fullPath = "{$folderPath}/{$newName}";
 
@@ -37,10 +41,6 @@ class FileService
 
       if ($fileRecord->save()) {
 
-        if (!is_dir($folderPath)) {
-          FileHelper::createDirectory($folderPath, 0775);
-        }
-
         if ($file->saveAs($fullPath)) {
           return $fileRecord;
         }
@@ -48,47 +48,10 @@ class FileService
         $fileRecord->delete();
       }
 
-      return null;
     } catch (\Throwable $e) {
       Yii::error("Ошибка в FileService::saveFile: " . $e->getMessage());
     }
 
     return null;
-  }
-
-  /**
-   * Удаляет файл с диска и запись из таблицы файлов
-   * @param int|null $fileId ID файла в таблице files
-   * 
-   * @return bool Возвращает true при успешном удалении записи, false при ошибке удаления или если файл не найден
-   */
-  public static function deleteFile(?int $fileId): bool
-  {
-    if (!$fileId) {
-      return false;
-    }
-
-    $fileRecord = File::findOne($fileId);
-    if (!$fileRecord) {
-      return false;
-    }
-
-    $fullPath = Yii::getAlias('@webroot') . $fileRecord->file_path;
-
-    if (file_exists($fullPath)) {
-      if (!is_writable($fullPath) || !unlink($fullPath)) {
-        Yii::error("Не удалось удалить файл с диска: {$fullPath}");
-
-        return false;
-      }
-    }
-
-    if (!$fileRecord->delete()) {
-      Yii::error("Не удалось удалить запись из таблицы для файла с ID: {$fileId}");
-
-      return false;
-    }
-
-    return true;
   }
 }

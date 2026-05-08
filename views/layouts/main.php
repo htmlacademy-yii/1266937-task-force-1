@@ -6,6 +6,7 @@
 use app\assets\AppAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\Menu;
 
 AppAsset::register($this);
 
@@ -33,28 +34,30 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <img class="logo-image" src="/img/logotype.png" width=227 height=60 alt="taskforce">
                     </a>
                     <div class="nav-wrapper">
-                        <ul class="nav-list">
-                            <li class="list-item list-item--active">
-                                <a class="link link--nav">Новое</a>
-                            </li>
-                            <li class="list-item">
-                                <a href="<?= Url::to(['my-tasks/index']) ?>" class="link link--nav">
-                                    Мои задания
-                                </a>
-                            </li>
-                            <li class="list-item">
-                                <a href="<?= Url::to(['tasks/create']) ?>" class="link link--nav">Создать задание</a>
-                            </li>
-                            <li class="list-item">
-                                <a href="<?= Url::to(['settings/index']) ?>" class="link link--nav">Настройки</a>
-                            </li>
-                        </ul>
+
+                        <?= Menu::widget([
+                            'items' => [
+                                ['label' => 'Новое', 'url' => ['tasks/index']],
+                                ['label' => 'Мои задания', 'url' => ['my-tasks/index']],
+                                [
+                                    'label' => 'Создать задание',
+                                    'url' => ['tasks/create'],
+                                    'visible' => Yii::$app->user->can('customer')
+                                ],
+                                ['label' => 'Настройки', 'url' => ['settings/index']],
+                            ],
+                            'options' => ['class' => 'nav-list'],
+                            'itemOptions' => ['class' => 'list-item'],
+                            'linkTemplate' => '<a href="{url}" class="link link--nav">{label}</a>',
+                            'activeCssClass' => 'list-item--active',
+                        ]); ?>
+
                     </div>
                 </nav>
                 <div class="user-block">
                     <a href="<?= Url::to(['users/view', 'id' => Yii::$app->user->id]) ?>">
                         <img class="user-photo" src="<?= Url::to(
-                            Yii::$app->user->identity?->avatar?->url ?? '/img/avatars/4.png',
+                            Yii::$app->user->identity?->avatar?->url ?? '/img/man-glasses.jpg',
                             true
                         ) ?>" width="55" height="55" alt="Аватар">
                     </a>
